@@ -1,0 +1,39 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "laundry-shoes-60205",
+          "appId": "1:297638072014:android:631e1ebc9f8bbbaed6ca9f",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "laundry-shoes-60205",
+          "configurations": {
+            "android": "1:297638072014:android:631e1ebc9f8bbbaed6ca9f",
+            "ios": "1:297638072014:ios:a7c49e4297437dacd6ca9f",
+            "macos": "1:297638072014:ios:a7c49e4297437dacd6ca9f",
+            "web": "1:297638072014:web:af4d4063d4a7df53d6ca9f",
+            "windows": "1:297638072014:web:875cbe691930dfb3d6ca9f"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
