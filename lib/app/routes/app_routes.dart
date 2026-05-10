@@ -9,6 +9,11 @@ abstract class Routes {
   static const TREATMENT = _Paths.TREATMENT;
   static const ORDER_DETAIL = _Paths.ORDER_DETAIL;
   static const TAMBAH_PROMO = _Paths.TAMBAH_PROMO;
+  static const DATA_PELANGGAN = _Paths.DATA_PELANGGAN;
+  static const FORM_PELANGGAN = _Paths.FORM_PELANGGAN;
+  static const RIWAYAT_PELANGGAN = _Paths.RIWAYAT_PELANGGAN;
+  static const STOK_BAHAN = _Paths.STOK_BAHAN;
+  static const FORM_STOK_BAHAN = _Paths.FORM_STOK_BAHAN;
 }
 
 abstract class _Paths {
@@ -20,4 +25,9 @@ abstract class _Paths {
   static const TREATMENT = '/treatment';
   static const ORDER_DETAIL = '/order/:id';
   static const TAMBAH_PROMO = '/tambah-promo';
+  static const DATA_PELANGGAN = '/data-pelanggan';
+  static const FORM_PELANGGAN = '/form-pelanggan';
+  static const RIWAYAT_PELANGGAN = '/riwayat-pelanggan';
+  static const STOK_BAHAN = '/stok-bahan';
+  static const FORM_STOK_BAHAN = '/form-stok-bahan';
 }

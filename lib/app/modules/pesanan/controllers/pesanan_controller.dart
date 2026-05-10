@@ -25,11 +25,140 @@ class PesananController extends GetxController {
   }
 
   /// ================= UPDATE =================
-  Future<void> updateStatus(String id, String status) async {
-    await _firestore.collection('orders').doc(id).update({
+  Future<void> updateStatus(
+  String id,
+  String status,
+) async {
+
+  try {
+
+    final orderRef =
+        _firestore.collection('orders').doc(id);
+
+    final orderSnapshot =
+        await orderRef.get();
+
+    final orderData =
+        orderSnapshot.data();
+
+    if (orderData == null) return;
+
+    /// ================= UPDATE STATUS =================
+    await orderRef.update({
       'status': status,
     });
+
+    /// ================= AUTO CUT STOCK =================
+    if (status == 'Diproses' &&
+        orderData['stock_cut'] != true) {
+
+      final items =
+          orderData['items'] as List<dynamic>;
+
+      /// ================= LOOP ITEM =================
+      for (var item in items) {
+
+        final treatmentName =
+            item['treatment'];
+
+        final qtyOrder =
+            (item['qty'] ?? 1) as int;
+
+        /// ================= AMBIL TREATMENT =================
+        final treatmentSnapshot =
+            await _firestore
+                .collection('treatments')
+                .where(
+                  'name',
+                  isEqualTo: treatmentName,
+                )
+                .get();
+
+        if (treatmentSnapshot.docs.isEmpty) {
+          continue;
+        }
+
+        final treatmentData =
+            treatmentSnapshot.docs.first.data();
+
+        /// ================= CEK MATERIAL =================
+        if (!treatmentData.containsKey('materials')) {
+          continue;
+        }
+
+        final materials =
+            treatmentData['materials'];
+
+        if (materials == null) {
+          continue;
+        }
+
+        /// ================= LOOP MATERIAL =================
+        for (var material in materials) {
+
+          final materialName =
+              material['name'];
+
+          final materialQty =
+              (material['qty'] ?? 0) as int;
+
+          final totalCut =
+              (materialQty * qtyOrder).toInt();
+
+          /// ================= CARI MATERIAL =================
+          final materialSnapshot =
+              await _firestore
+                  .collection('materials')
+                  .where(
+                    'name',
+                    isEqualTo: materialName,
+                  )
+                  .get();
+
+          if (materialSnapshot.docs.isEmpty) {
+            continue;
+          }
+
+          final materialDoc =
+              materialSnapshot.docs.first;
+
+          final materialData =
+              materialDoc.data();
+
+          final currentStock =
+              (materialData['stock'] ?? 0) as int;
+
+          /// ================= UPDATE STOCK =================
+          await _firestore
+              .collection('materials')
+              .doc(materialDoc.id)
+              .update({
+
+            'stock':
+                currentStock - totalCut,
+          });
+        }
+      }
+
+      /// ================= ANTI DOUBLE CUT =================
+      await orderRef.update({
+        'stock_cut': true,
+      });
+    }
+
+    Get.snackbar(
+      'Sukses',
+      'Status berhasil diupdate',
+    );
+
+  } catch (e) {
+
+    Get.snackbar(
+      'Error',
+      e.toString(),
+    );
   }
+}
 
   Future<void> deletePesanan(String id) async {
     await _firestore.collection('orders').doc(id).delete();

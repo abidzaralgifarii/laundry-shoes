@@ -165,12 +165,12 @@ class DashboardView extends StatelessWidget {
                   _menuItem(
                     'Data Pelanggan',
                     Icons.people,
-                    () => Get.toNamed('/customers'),
+                    () => Get.toNamed('data-pelanggan'),
                   ),
                   _menuItem(
                     'Stok Bahan',
                     Icons.inventory,
-                    () => Get.toNamed('/materials'),
+                    () => Get.toNamed('/stok-bahan'),
                   ),
                   _menuItem(
                     'Laporan',
