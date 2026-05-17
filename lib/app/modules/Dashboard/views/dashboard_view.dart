@@ -1,78 +1,226 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:laundry_sepatu/app/modules/Dashboard/controllers/dashboard_controller.dart';
+import 'package:laundry_sepatu/app/modules/auth/controllers/auth_controller.dart';
 
 class DashboardView extends StatelessWidget {
   const DashboardView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<DashboardController>();
+    final controller =
+        Get.find<DashboardController>();
+
+    final authC =
+        Get.find<AuthController>();
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
 
-      /// HEADER
+      /// ================= APPBAR =================
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor:
+            const Color(0xFF2196F3),
         automaticallyImplyLeading: false,
-        title: const Text(
-          'Eza Shoes',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+
+        title: Row(
+          children: [
+
+            /// ================= LOGO =================
+            Container(
+              padding:
+                  const EdgeInsets.all(8),
+
+              decoration: BoxDecoration(
+                color: Colors.white
+                    .withOpacity(0.2),
+
+                borderRadius:
+                    BorderRadius.circular(
+                  12,
+                ),
+              ),
+
+              child: const Icon(
+                Icons.cleaning_services,
+
+                color: Colors.white,
+
+                size: 22,
+              ),
+            ),
+
+            const SizedBox(width: 12),
+
+            /// ================= TITLE =================
+            const Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
+
+              children: [
+
+                Text(
+                  'Eza Shoes',
+
+                  style: TextStyle(
+                    color: Colors.white,
+
+                    fontWeight:
+                        FontWeight.bold,
+
+                    fontSize: 18,
+                  ),
+                ),
+
+                Text(
+                  'Cleaner App',
+
+                  style: TextStyle(
+                    color: Colors.white70,
+
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
+
+        actions: [
+
+          /// ================= LOGOUT =================
+          Padding(
+            padding:
+                const EdgeInsets.only(
+              right: 12,
+            ),
+
+            child: GestureDetector(
+              onTap: () async {
+
+                await authC.logout();
+              },
+
+              child: Container(
+                padding:
+                    const EdgeInsets.all(
+                  10,
+                ),
+
+                decoration: BoxDecoration(
+                  color: Colors.white
+                      .withOpacity(0.2),
+
+                  borderRadius:
+                      BorderRadius.circular(
+                    12,
+                  ),
+                ),
+
+                child: const Icon(
+                  Icons.logout,
+
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
 
       body: RefreshIndicator(
         onRefresh: () async {
-          await controller.fetchDashboardData();
+
+          await controller
+              .fetchDashboardData();
         },
+
         child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(16),
+          physics:
+              const AlwaysScrollableScrollPhysics(),
+
+          padding:
+              const EdgeInsets.all(16),
+
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
+
             children: [
 
-              /// 👋 GREETING
-              const Text(
-                'Hallo, Eza 👋',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              /// ================= GREETING =================
+              Obx(() => Column(
+                    crossAxisAlignment:
+                        CrossAxisAlignment
+                            .start,
 
-              const SizedBox(height: 4),
+                    children: [
 
-              Text(
-                'Selamat datang kembali',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                ),
-              ),
+                      const Text(
+                        'Selamat Datang 👋',
+
+                        style: TextStyle(
+                          fontSize: 16,
+
+                          color: Colors.grey,
+                        ),
+                      ),
+
+                      const SizedBox(
+                        height: 4,
+                      ),
+
+                      Text(
+                        authC.nickname.value,
+
+                        style:
+                            const TextStyle(
+                          fontSize: 24,
+
+                          fontWeight:
+                              FontWeight
+                                  .bold,
+                        ),
+                      ),
+                    ],
+                  )),
 
               const SizedBox(height: 20),
 
-              /// CARD DASHBOARD
+              /// ================= CARD DASHBOARD =================
               Obx(() => Row(
                     children: [
+
                       Expanded(
                         child: _card(
-                          title: 'Total Pesanan',
-                          value: controller.totalOrders.value.toString(),
-                          color: Colors.blue,
+                          title:
+                              'Total Pesanan',
+
+                          value: controller
+                              .totalOrders
+                              .value
+                              .toString(),
+
+                          color:
+                              Colors.blue,
                         ),
                       ),
-                      const SizedBox(width: 12),
+
+                      const SizedBox(
+                        width: 12,
+                      ),
+
                       Expanded(
                         child: _card(
-                          title: 'Hari Ini',
-                          value: 'Rp ${controller.totalIncomeToday.value}',
-                          color: Colors.green,
+                          title:
+                              'Hari Ini',
+
+                          value:
+                              'Rp ${controller.totalIncomeToday.value}',
+
+                          color:
+                              Colors.green,
                         ),
                       ),
                     ],
@@ -82,103 +230,187 @@ class DashboardView extends StatelessWidget {
 
               Obx(() => Row(
                     children: [
+
                       Expanded(
                         child: _card(
-                          title: 'Bulan Ini',
-                          value: 'Rp ${controller.totalIncomeMonth.value}',
-                          color: Colors.orange,
+                          title:
+                              'Bulan Ini',
+
+                          value:
+                              'Rp ${controller.totalIncomeMonth.value}',
+
+                          color:
+                              Colors.orange,
                         ),
                       ),
-                      const SizedBox(width: 12),
+
+                      const SizedBox(
+                        width: 12,
+                      ),
+
                       Expanded(
                         child: _card(
-                          title: 'Selesai',
-                          value: controller.selesai.value.toString(),
-                          color: Colors.teal,
+                          title:
+                              'Selesai',
+
+                          value: controller
+                              .selesai.value
+                              .toString(),
+
+                          color:
+                              Colors.teal,
                         ),
                       ),
                     ],
                   )),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
 
-              /// STATUS
+              /// ================= STATUS =================
               const Text(
                 'Status Pesanan',
+
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
+                  fontWeight:
+                      FontWeight.bold,
+
+                  fontSize: 18,
                 ),
               ),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
 
               Obx(() => Row(
                     children: [
+
                       Expanded(
                         child: _statusCard(
                           'Diterima',
-                          controller.diterima.value,
+
+                          controller
+                              .diterima
+                              .value,
+
                           Colors.grey,
                         ),
                       ),
+
+                      const SizedBox(
+                        width: 10,
+                      ),
+
                       Expanded(
                         child: _statusCard(
                           'Diproses',
-                          controller.diproses.value,
+
+                          controller
+                              .diproses
+                              .value,
+
                           Colors.orange,
                         ),
                       ),
+
+                      const SizedBox(
+                        width: 10,
+                      ),
+
                       Expanded(
                         child: _statusCard(
                           'Selesai',
-                          controller.selesai.value,
+
+                          controller
+                              .selesai
+                              .value,
+
                           Colors.green,
                         ),
                       ),
                     ],
                   )),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
 
-              /// MENU CEPAT
+              /// ================= MENU CEPAT =================
               const Text(
                 'Menu Cepat',
+
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
+                  fontWeight:
+                      FontWeight.bold,
+
+                  fontSize: 18,
                 ),
               ),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
 
-              GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                children: [
-                  _menuItem(
-                    'Tambah Pesanan',
-                    Icons.add,
-                    () => Get.toNamed('/pesanan')
-                  ),
-                  _menuItem(
-                    'Data Pelanggan',
-                    Icons.people,
-                    () => Get.toNamed('data-pelanggan'),
-                  ),
-                  _menuItem(
-                    'Stok Bahan',
-                    Icons.inventory,
-                    () => Get.toNamed('/stok-bahan'),
-                  ),
-                  _menuItem(
-                    'Laporan',
-                    Icons.bar_chart,
-                    () => Get.toNamed('/reports'),
-                  ),
-                ],
-              ),
+              /// ================= GRID MENU =================
+              Obx(() {
+
+                return GridView.count(
+                  crossAxisCount: 2,
+
+                  shrinkWrap: true,
+
+                  physics:
+                      const NeverScrollableScrollPhysics(),
+
+                  crossAxisSpacing: 12,
+
+                  mainAxisSpacing: 12,
+
+                  children: [
+
+                    /// ================= TAMBAH PESANAN =================
+                    _menuItem(
+                      'Tambah Pesanan',
+
+                      Icons.add,
+
+                      () => Get.toNamed(
+                        '/pesanan',
+                      ),
+                    ),
+
+                    /// ================= DATA PELANGGAN =================
+                    _menuItem(
+                      'Data Pelanggan',
+
+                      Icons.people,
+
+                      () => Get.toNamed(
+                        '/data-pelanggan',
+                      ),
+                    ),
+
+                    /// ================= STOK =================
+                    _menuItem(
+                      'Stok Bahan',
+
+                      Icons.inventory,
+
+                      () => Get.toNamed(
+                        '/stok-bahan',
+                      ),
+                    ),
+
+                    /// ================= OWNER ONLY =================
+                    if (authC.role.value ==
+                        'owner')
+
+                      _menuItem(
+                        'Laporan',
+
+                        Icons.bar_chart,
+
+                        () => Get.toNamed(
+                          '/laporan',
+                        ),
+                      ),
+                  ],
+                );
+              }),
             ],
           ),
         ),
@@ -186,28 +418,67 @@ class DashboardView extends StatelessWidget {
     );
   }
 
-  /// CARD
+  /// ================= CARD =================
   Widget _card({
     required String title,
     required String value,
     required Color color,
   }) {
+
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding:
+          const EdgeInsets.all(18),
+
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(12),
+
+        borderRadius:
+            BorderRadius.circular(
+          20,
+        ),
+
+        boxShadow: [
+
+          BoxShadow(
+            color:
+                color.withOpacity(0.3),
+
+            blurRadius: 10,
+
+            offset:
+                const Offset(0, 5),
+          ),
+        ],
       ),
+
       child: Column(
+        crossAxisAlignment:
+            CrossAxisAlignment.start,
+
         children: [
-          Text(title, style: const TextStyle(color: Colors.white)),
-          const SizedBox(height: 8),
+
           Text(
-            value,
+            title,
+
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+
+              fontSize: 14,
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          Text(
+            value,
+
+            style: const TextStyle(
+              color: Colors.white,
+
+              fontSize: 24,
+
+              fontWeight:
+                  FontWeight.bold,
             ),
           ),
         ],
@@ -215,51 +486,151 @@ class DashboardView extends StatelessWidget {
     );
   }
 
-  /// STATUS CARD
-  Widget _statusCard(String title, int value, Color color) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-            Text(title),
-            const SizedBox(height: 8),
-            Text(
-              value.toString(),
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-          ],
+  /// ================= STATUS CARD =================
+  Widget _statusCard(
+    String title,
+    int value,
+    Color color,
+  ) {
+
+    return Container(
+      padding:
+          const EdgeInsets.symmetric(
+        vertical: 16,
+      ),
+
+      decoration: BoxDecoration(
+        color: Colors.white,
+
+        borderRadius:
+            BorderRadius.circular(
+          18,
         ),
+
+        boxShadow: [
+
+          BoxShadow(
+            color:
+                Colors.grey.withOpacity(
+              0.1,
+            ),
+
+            blurRadius: 8,
+
+            offset:
+                const Offset(0, 4),
+          ),
+        ],
+      ),
+
+      child: Column(
+        children: [
+
+          Text(
+            title,
+
+            style: TextStyle(
+              color: Colors.grey[700],
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            value.toString(),
+
+            style: TextStyle(
+              fontSize: 22,
+
+              fontWeight:
+                  FontWeight.bold,
+
+              color: color,
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  /// MENU ITEM
-  Widget _menuItem(String title, IconData icon, VoidCallback onTap) {
+  /// ================= MENU ITEM =================
+  Widget _menuItem(
+    String title,
+    IconData icon,
+    VoidCallback onTap,
+  ) {
+
     return GestureDetector(
       onTap: onTap,
+
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+
+          borderRadius:
+              BorderRadius.circular(
+            20,
+          ),
+
           boxShadow: [
+
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              blurRadius: 5,
-              offset: const Offset(0, 3),
-            )
+              color:
+                  Colors.grey.withOpacity(
+                0.1,
+              ),
+
+              blurRadius: 10,
+
+              offset:
+                  const Offset(0, 5),
+            ),
           ],
         ),
+
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment:
+              MainAxisAlignment.center,
+
           children: [
-            Icon(icon, size: 30),
-            const SizedBox(height: 8),
-            Text(title),
+
+            Container(
+              padding:
+                  const EdgeInsets.all(
+                14,
+              ),
+
+              decoration: BoxDecoration(
+                color:
+                    Colors.blue.withOpacity(
+                  0.1,
+                ),
+
+                shape: BoxShape.circle,
+              ),
+
+              child: Icon(
+                icon,
+
+                size: 28,
+
+                color: Colors.blue,
+              ),
+            ),
+
+            const SizedBox(height: 14),
+
+            Text(
+              title,
+
+              textAlign:
+                  TextAlign.center,
+
+              style: const TextStyle(
+                fontWeight:
+                    FontWeight.w600,
+              ),
+            ),
           ],
         ),
       ),

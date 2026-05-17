@@ -14,6 +14,10 @@ abstract class Routes {
   static const RIWAYAT_PELANGGAN = _Paths.RIWAYAT_PELANGGAN;
   static const STOK_BAHAN = _Paths.STOK_BAHAN;
   static const FORM_STOK_BAHAN = _Paths.FORM_STOK_BAHAN;
+  static const LAPORAN = _Paths.LAPORAN;
+  static const AUTH = _Paths.AUTH;
+  static const SPLASHSCREEN = _Paths.SPLASHSCREEN;
+  static const SPLASH = _Paths.SPLASH;
 }
 
 abstract class _Paths {
@@ -30,4 +34,8 @@ abstract class _Paths {
   static const RIWAYAT_PELANGGAN = '/riwayat-pelanggan';
   static const STOK_BAHAN = '/stok-bahan';
   static const FORM_STOK_BAHAN = '/form-stok-bahan';
+  static const LAPORAN = '/laporan';
+  static const AUTH = '/auth';
+  static const SPLASHSCREEN = '/splashscreen';
+  static const SPLASH = '/splash';
 }

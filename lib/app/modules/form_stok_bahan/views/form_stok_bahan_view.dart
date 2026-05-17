@@ -7,53 +7,102 @@ class FormStokBahanView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<FormStokBahanController>();
+    final controller =
+        Get.find<FormStokBahanController>();
 
     return Scaffold(
       appBar: AppBar(
-        title: Obx(
-          () => Text(
-            controller.isEdit.value ? 'Edit Bahan' : 'Tambah Bahan',
-          ),
-        ),
+        title: Obx(() => Text(
+
+          controller.isEdit.value
+              ? 'Edit Bahan'
+              : 'Tambah Bahan',
+        )),
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
+
         child: Column(
           children: [
+
+            /// ================= NAMA =================
             TextField(
               controller: controller.namaC,
+
               decoration: const InputDecoration(
                 labelText: 'Nama Bahan',
                 border: OutlineInputBorder(),
               ),
             ),
+
             const SizedBox(height: 16),
+
+            /// ================= STOCK =================
             TextField(
               controller: controller.stockC,
               keyboardType: TextInputType.number,
+
               decoration: const InputDecoration(
                 labelText: 'Stok',
                 border: OutlineInputBorder(),
               ),
             ),
+
             const SizedBox(height: 16),
+
+            /// ================= UNIT =================
             TextField(
               controller: controller.unitC,
+
               decoration: const InputDecoration(
-                labelText: 'Satuan (ml / pcs)',
+                labelText: 'Satuan (ml, pcs, dll)',
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 24),
+
+            const SizedBox(height: 16),
+
+            /// ================= HARGA BELI =================
+            Obx(() {
+
+              /// 🔥 HANYA SAAT TAMBAH
+              if (controller.isEdit.value) {
+                return const SizedBox();
+              }
+
+              return Column(
+                children: [
+
+                  TextField(
+                    controller: controller.hargaC,
+                    keyboardType:
+                        TextInputType.number,
+
+                    decoration:
+                        const InputDecoration(
+                      labelText:
+                          'Harga Beli Awal',
+                      border:
+                          OutlineInputBorder(),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+                ],
+              );
+            }),
+
+            /// ================= BUTTON =================
             SizedBox(
               width: double.infinity,
+
               child: ElevatedButton(
-                onPressed: controller.simpanBahan,
-                child: Obx(
-                  () => Text(
-                    controller.isEdit.value ? 'Update Bahan' : 'Simpan Bahan',
-                  ),
+                onPressed:
+                    controller.simpanBahan,
+
+                child: const Text(
+                  'Simpan',
                 ),
               ),
             ),

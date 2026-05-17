@@ -2,18 +2,24 @@ import 'package:get/get.dart';
 
 import '../modules/Dashboard/bindings/dashboard_binding.dart';
 import '../modules/Dashboard/views/dashboard_view.dart';
+import '../modules/auth/bindings/auth_binding.dart';
+import '../modules/auth/views/auth_view.dart';
 import '../modules/data_pelanggan/bindings/data_pelanggan_binding.dart';
 import '../modules/data_pelanggan/views/data_pelanggan_view.dart';
 import '../modules/form_pelanggan/bindings/form_pelanggan_binding.dart';
 import '../modules/form_pelanggan/views/form_pelanggan_view.dart';
 import '../modules/form_stok_bahan/bindings/form_stok_bahan_binding.dart';
 import '../modules/form_stok_bahan/views/form_stok_bahan_view.dart';
+import '../modules/laporan/bindings/laporan_binding.dart';
+import '../modules/laporan/views/laporan_view.dart';
 import '../modules/orderDetail/bindings/order_detail_binding.dart';
 import '../modules/orderDetail/views/order_detail_view.dart';
 import '../modules/pesanan/bindings/pesanan_binding.dart';
 import '../modules/pesanan/views/pesanan_view.dart';
 import '../modules/riwayat_pelanggan/bindings/riwayat_pelanggan_binding.dart';
 import '../modules/riwayat_pelanggan/views/riwayat_pelanggan_view.dart';
+import '../modules/splash/bindings/splash_binding.dart';
+import '../modules/splash/views/splash_view.dart';
 import '../modules/stok_bahan/bindings/stok_bahan_binding.dart';
 import '../modules/stok_bahan/views/stok_bahan_view.dart';
 import '../modules/tambahPromo/bindings/tambah_promo_binding.dart';
@@ -29,7 +35,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.DASHBOARD;
+  static const INITIAL = '/splash';
 
   static final routes = [
     GetPage(
@@ -91,6 +97,21 @@ class AppPages {
       name: _Paths.FORM_STOK_BAHAN,
       page: () => const FormStokBahanView(),
       binding: FormStokBahanBinding(),
+    ),
+    GetPage(
+      name: _Paths.LAPORAN,
+      page: () => const LaporanView(),
+      binding: LaporanBinding(),
+    ),
+    GetPage(
+      name: _Paths.AUTH,
+      page: () => const AuthView(),
+      binding: AuthBinding(),
+    ),
+    GetPage(
+      name: _Paths.SPLASH,
+      page: () => const SplashView(),
+      binding: SplashBinding(),
     ),
   ];
 }
