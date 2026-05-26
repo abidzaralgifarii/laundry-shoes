@@ -8,80 +8,212 @@ class PesananView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<PesananController>();
+    final controller =
+        Get.find<PesananController>();
 
     return Scaffold(
+      backgroundColor: Colors.grey[100],
+
+      /// ================= APPBAR =================
       appBar: AppBar(
-        title: const Text('Pesanan'),
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor:
+            const Color(0xFF2196F3),
+
+        title: const Text(
+          'Pesanan',
+
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight:
+                FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
       ),
 
-      /// 🔥 BUTTON TAMBAH PESANAN
-      floatingActionButton: FloatingActionButton(
+      /// ================= BUTTON TAMBAH =================
+      floatingActionButton:
+          FloatingActionButton(
+        backgroundColor:
+            const Color(0xFF2196F3),
+
         onPressed: () {
-          Get.toNamed('/tambah-pesanan');
+          Get.toNamed(
+            '/tambah-pesanan',
+          );
         },
-        child: const Icon(Icons.add),
+
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
       ),
 
-      /// 🔥 LIST PESANAN
-      body: StreamBuilder<List<Map<String, dynamic>>>(
-        stream: controller.getPesanan(),
+      /// ================= LIST PESANAN =================
+      body: StreamBuilder<
+          List<Map<String, dynamic>>>(
+        stream:
+            controller.getPesanan(),
+
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+
+          /// ================= LOADING =================
+          if (snapshot.connectionState ==
+              ConnectionState.waiting) {
+            return const Center(
+              child:
+                  CircularProgressIndicator(),
+            );
           }
 
-          final data = snapshot.data ?? [];
+          final data =
+              snapshot.data ?? [];
 
+          /// ================= EMPTY =================
           if (data.isEmpty) {
             return const Center(
-              child: Text('Belum ada pesanan'),
+              child: Text(
+                'Belum ada pesanan',
+              ),
             );
           }
 
           return ListView.builder(
             itemCount: data.length,
-            itemBuilder: (context, index) {
-              final pesanan = data[index];
+
+            itemBuilder:
+                (context, index) {
+
+              final pesanan =
+                  data[index];
 
               return Card(
-                margin: const EdgeInsets.symmetric(
+                elevation: 3,
+
+                color: Colors.white,
+
+                margin:
+                    const EdgeInsets
+                        .symmetric(
                   horizontal: 12,
                   vertical: 6,
                 ),
+
+                shape:
+                    RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(
+                    16,
+                  ),
+                ),
+
                 child: ListTile(
+
+                  /// ================= NAMA =================
                   title: Text(
-                    pesanan['customer_name'] ?? '-',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
+                    pesanan[
+                            'customer_name'] ??
+                        '-',
+
+                    style:
+                        const TextStyle(
+                      fontWeight:
+                          FontWeight.bold,
+
+                      fontSize: 16,
                     ),
                   ),
 
+                  /// ================= DETAIL =================
                   subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 4),
+                    crossAxisAlignment:
+                        CrossAxisAlignment
+                            .start,
 
-                      Text(
-                        'Total: Rp ${pesanan['final_price'] ?? pesanan['total_price']}',
+                    children: [
+
+                      const SizedBox(
+                        height: 8,
                       ),
 
-                      const SizedBox(height: 2),
+                      /// ================= TOTAL =================
+                      Text(
+                        'Total: Rp ${pesanan['final_price'] ?? pesanan['total_price']}',
 
-                      /// 🔥 DISKON (OPTIONAL)
-                      if (pesanan['discount'] != null &&
-                          pesanan['discount'] > 0)
+                        style:
+                            const TextStyle(
+                          fontWeight:
+                              FontWeight.w500,
+                        ),
+                      ),
+
+                      const SizedBox(
+                        height: 4,
+                      ),
+
+                      /// ================= DISKON =================
+                      if (pesanan[
+                                  'discount'] !=
+                              null &&
+                          pesanan[
+                                  'discount'] >
+                              0)
+
                         Text(
                           'Diskon: Rp ${pesanan['discount']}',
-                          style: const TextStyle(color: Colors.red),
+
+                          style:
+                              const TextStyle(
+                            color:
+                                Colors.red,
+                          ),
                         ),
 
-                      /// 🔥 STATUS
-                      Text(
-                        'Status: ${pesanan['status']}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: _warnaStatus(pesanan['status']),
+                      const SizedBox(
+                        height: 4,
+                      ),
+
+                      /// ================= STATUS =================
+                      Container(
+                        padding:
+                            const EdgeInsets
+                                .symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+
+                        decoration:
+                            BoxDecoration(
+                          color: _warnaStatus(
+                                  pesanan[
+                                      'status'])
+                              .withOpacity(
+                                  0.15),
+
+                          borderRadius:
+                              BorderRadius
+                                  .circular(
+                            20,
+                          ),
+                        ),
+
+                        child: Text(
+                          pesanan[
+                              'status'],
+
+                          style:
+                              TextStyle(
+                            fontWeight:
+                                FontWeight
+                                    .bold,
+
+                            color: _warnaStatus(
+                              pesanan[
+                                  'status'],
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -89,57 +221,108 @@ class PesananView extends StatelessWidget {
 
                   isThreeLine: true,
 
-                  /// 🔥 ACTION BUTTONS
+                  /// ================= ACTION =================
                   trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisSize:
+                        MainAxisSize.min,
+
                     children: [
-                      /// 🔥 UPDATE STATUS & HAPUS
-                      PopupMenuButton<String>(
-                        icon: const Icon(Icons.more_vert),
-                        onSelected: (value) async {
-                          if (value == 'hapus') {
-                            await controller.deletePesanan(
-                              pesanan['id'],
+
+                      /// ================= MENU =================
+                      PopupMenuButton<
+                          String>(
+                        icon: const Icon(
+                          Icons.more_vert,
+                        ),
+
+                        onSelected:
+                            (value) async {
+
+                          if (value ==
+                              'hapus') {
+
+                            await controller
+                                .deletePesanan(
+                              pesanan[
+                                  'id'],
                             );
+
                           } else {
-                            await controller.updateStatus(
-                              pesanan['id'],
+
+                            await controller
+                                .updateStatus(
+                              pesanan[
+                                  'id'],
                               value,
                             );
                           }
                         },
-                        itemBuilder: (context) => const [
+
+                        itemBuilder:
+                            (context) => const [
+
                           PopupMenuItem(
-                            value: 'Diproses',
-                            child: Text('Diproses'),
+                            value:
+                                'Diproses',
+
+                            child: Text(
+                              'Diproses',
+                            ),
                           ),
+
                           PopupMenuItem(
-                            value: 'Selesai',
-                            child: Text('Selesai'),
+                            value:
+                                'Selesai',
+
+                            child: Text(
+                              'Selesai',
+                            ),
                           ),
+
                           PopupMenuItem(
-                            value: 'hapus',
-                            child: Text('Hapus'),
+                            value:
+                                'hapus',
+
+                            child: Text(
+                              'Hapus',
+                            ),
                           ),
                         ],
                       ),
 
-                      /// 🔥 PRINT PDF
+                      /// ================= PRINT =================
                       IconButton(
-                        icon: const Icon(Icons.print),
+                        icon: const Icon(
+                          Icons.print,
+
+                          color:
+                              Colors.blue,
+                        ),
+
                         onPressed: () {
-                          controller.cetakStrukPDF(pesanan);
+
+                          controller
+                              .cetakStrukPDF(
+                            pesanan,
+                          );
                         },
                       ),
 
-                      /// 🔥 WHATSAPP
+                      /// ================= WA =================
                       IconButton(
                         icon: const Icon(
                           Icons.chat,
-                          color: Colors.green,
+
+                          color:
+                              Colors.green,
                         ),
+
                         onPressed: () {
-                          controller.kirimWhatsApp(pesanan);
+
+                          controller
+                              .kirimWhatsApp(
+                            pesanan,
+                          );
                         },
                       ),
                     ],
@@ -160,19 +343,30 @@ class PesananView extends StatelessWidget {
     );
   }
 
-  /// 🔥 FORMAT TANGGAL
-  String _formatTanggal(dynamic timestamp) {
-    final date = timestamp.toDate();
-    return DateFormat('dd MMM yyyy').format(date);
+  /// ================= FORMAT TANGGAL =================
+  String _formatTanggal(
+      dynamic timestamp) {
+
+    final date =
+        timestamp.toDate();
+
+    return DateFormat(
+      'dd MMM yyyy',
+    ).format(date);
   }
 
-  /// 🔥 WARNA STATUS
-  Color _warnaStatus(String status) {
+  /// ================= WARNA STATUS =================
+  Color _warnaStatus(
+      String status) {
+
     switch (status) {
+
       case 'Selesai':
         return Colors.green;
+
       case 'Diproses':
         return Colors.orange;
+
       default:
         return Colors.grey;
     }

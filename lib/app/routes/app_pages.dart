@@ -64,9 +64,8 @@ class AppPages {
       binding: TreatmentBinding(),
     ),
     GetPage(
-      name: _Paths.ORDER_DETAIL,
+      name: '/order/:id',
       page: () => const OrderDetailView(),
-      binding: OrderDetailBinding(),
     ),
     GetPage(
       name: _Paths.TAMBAH_PROMO,

@@ -7,27 +7,75 @@ class TreatmentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<TreatmentController>();
+
+    final controller =
+        Get.find<TreatmentController>();
 
     return Scaffold(
+
+      backgroundColor:
+          Colors.grey[100],
+
+      /// ================= APPBAR =================
       appBar: AppBar(
-        title: const Text('Tambah Treatment'),
+        elevation: 0,
+        centerTitle: true,
+
+        backgroundColor:
+            const Color(0xFF2196F3),
+
+        title: const Text(
+          'Tambah Treatment',
+
+          style: TextStyle(
+            color: Colors.white,
+
+            fontWeight:
+                FontWeight.bold,
+
+            fontSize: 20,
+          ),
+        ),
       ),
 
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding:
+            const EdgeInsets.all(16),
 
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment:
+              CrossAxisAlignment.start,
+
           children: [
 
             /// ================= NAMA =================
             TextField(
-              controller: controller.namaC,
+              controller:
+                  controller.namaC,
 
-              decoration: const InputDecoration(
-                labelText: 'Nama Treatment',
-                border: OutlineInputBorder(),
+              decoration:
+                  InputDecoration(
+
+                labelText:
+                    'Nama Treatment',
+
+                filled: true,
+
+                fillColor:
+                    Colors.white,
+
+                border:
+                    OutlineInputBorder(
+
+                  borderRadius:
+                      BorderRadius
+                          .circular(14),
+                ),
+
+                prefixIcon:
+                    const Icon(
+                  Icons.cleaning_services,
+                ),
               ),
             ),
 
@@ -35,12 +83,35 @@ class TreatmentView extends StatelessWidget {
 
             /// ================= HARGA =================
             TextField(
-              controller: controller.hargaC,
-              keyboardType: TextInputType.number,
+              controller:
+                  controller.hargaC,
 
-              decoration: const InputDecoration(
-                labelText: 'Harga',
-                border: OutlineInputBorder(),
+              keyboardType:
+                  TextInputType.number,
+
+              decoration:
+                  InputDecoration(
+
+                labelText:
+                    'Harga',
+
+                filled: true,
+
+                fillColor:
+                    Colors.white,
+
+                border:
+                    OutlineInputBorder(
+
+                  borderRadius:
+                      BorderRadius
+                          .circular(14),
+                ),
+
+                prefixIcon:
+                    const Icon(
+                  Icons.payments,
+                ),
               ),
             ),
 
@@ -48,11 +119,32 @@ class TreatmentView extends StatelessWidget {
 
             /// ================= DURASI =================
             TextField(
-              controller: controller.durasiC,
+              controller:
+                  controller.durasiC,
 
-              decoration: const InputDecoration(
-                labelText: 'Durasi (contoh: 3 hari)',
-                border: OutlineInputBorder(),
+              decoration:
+                  InputDecoration(
+
+                labelText:
+                    'Durasi (contoh: 3 hari)',
+
+                filled: true,
+
+                fillColor:
+                    Colors.white,
+
+                border:
+                    OutlineInputBorder(
+
+                  borderRadius:
+                      BorderRadius
+                          .circular(14),
+                ),
+
+                prefixIcon:
+                    const Icon(
+                  Icons.schedule,
+                ),
               ),
             ),
 
@@ -61,8 +153,11 @@ class TreatmentView extends StatelessWidget {
             /// ================= TITLE =================
             const Text(
               'Bahan Treatment',
+
               style: TextStyle(
-                fontWeight: FontWeight.bold,
+                fontWeight:
+                    FontWeight.bold,
+
                 fontSize: 16,
               ),
             ),
@@ -71,16 +166,38 @@ class TreatmentView extends StatelessWidget {
 
             /// ================= DROPDOWN MATERIAL =================
             Obx(
-              () => DropdownButtonFormField<Map<String, dynamic>>(
-                value: controller.selectedMaterial.value,
+              () => DropdownButtonFormField<
+                  Map<String, dynamic>>(
+
+                value: controller
+                    .selectedMaterial
+                    .value,
+
                 isExpanded: true,
 
-                decoration: const InputDecoration(
-                  labelText: 'Pilih Bahan',
-                  border: OutlineInputBorder(),
+                decoration:
+                    InputDecoration(
+
+                  labelText:
+                      'Pilih Bahan',
+
+                  filled: true,
+
+                  fillColor:
+                      Colors.white,
+
+                  border:
+                      OutlineInputBorder(
+
+                    borderRadius:
+                        BorderRadius
+                            .circular(14),
+                  ),
                 ),
 
-                items: controller.materialList.map((item) {
+                items: controller
+                    .materialList
+                    .map((item) {
 
                   return DropdownMenuItem(
                     value: item,
@@ -93,7 +210,10 @@ class TreatmentView extends StatelessWidget {
                 }).toList(),
 
                 onChanged: (value) {
-                  controller.selectedMaterial.value = value;
+
+                  controller
+                      .selectedMaterial
+                      .value = value;
                 },
               ),
             ),
@@ -102,12 +222,35 @@ class TreatmentView extends StatelessWidget {
 
             /// ================= QTY MATERIAL =================
             TextField(
-              controller: controller.qtyMaterialC,
-              keyboardType: TextInputType.number,
+              controller:
+                  controller.qtyMaterialC,
 
-              decoration: const InputDecoration(
-                labelText: 'Qty Bahan',
-                border: OutlineInputBorder(),
+              keyboardType:
+                  TextInputType.number,
+
+              decoration:
+                  InputDecoration(
+
+                labelText:
+                    'Qty Bahan',
+
+                filled: true,
+
+                fillColor:
+                    Colors.white,
+
+                border:
+                    OutlineInputBorder(
+
+                  borderRadius:
+                      BorderRadius
+                          .circular(14),
+                ),
+
+                prefixIcon:
+                    const Icon(
+                  Icons.inventory_2,
+                ),
               ),
             ),
 
@@ -117,12 +260,49 @@ class TreatmentView extends StatelessWidget {
             SizedBox(
               width: double.infinity,
 
-              child: OutlinedButton.icon(
-                onPressed: controller.tambahMaterial,
+              child:
+                  OutlinedButton.icon(
 
-                icon: const Icon(Icons.add),
+                style:
+                    OutlinedButton
+                        .styleFrom(
 
-                label: const Text('Tambah Bahan'),
+                  foregroundColor:
+                      const Color(
+                    0xFF2196F3,
+                  ),
+
+                  side:
+                      const BorderSide(
+                    color:
+                        Color(0xFF2196F3),
+                  ),
+
+                  padding:
+                      const EdgeInsets.symmetric(
+                    vertical: 14,
+                  ),
+
+                  shape:
+                      RoundedRectangleBorder(
+
+                    borderRadius:
+                        BorderRadius.circular(
+                      14,
+                    ),
+                  ),
+                ),
+
+                onPressed:
+                    controller.tambahMaterial,
+
+                icon: const Icon(
+                  Icons.add,
+                ),
+
+                label: const Text(
+                  'Tambah Bahan',
+                ),
               ),
             ),
 
@@ -131,42 +311,98 @@ class TreatmentView extends StatelessWidget {
             /// ================= LIST MATERIAL =================
             Obx(() {
 
-              if (controller.materials.isEmpty) {
+              if (controller
+                  .materials.isEmpty) {
+
                 return const Text(
                   'Belum ada bahan',
                 );
               }
 
               return Column(
-                children:
-                    controller.materials.asMap().entries.map((entry) {
+                children: controller
+                    .materials
+                    .asMap()
+                    .entries
+                    .map((entry) {
 
-                  final index = entry.key;
-                  final material = entry.value;
+                  final index =
+                      entry.key;
+
+                  final material =
+                      entry.value;
 
                   return Card(
+
+                    elevation: 2,
+
+                    shape:
+                        RoundedRectangleBorder(
+
+                      borderRadius:
+                          BorderRadius
+                              .circular(
+                        16,
+                      ),
+                    ),
+
                     child: ListTile(
 
-                      leading: const Icon(
-                        Icons.inventory,
+                      leading:
+                          Container(
+
+                        padding:
+                            const EdgeInsets
+                                .all(10),
+
+                        decoration:
+                            BoxDecoration(
+
+                          color: Colors
+                              .blue
+                              .withOpacity(
+                                  0.1),
+
+                          shape:
+                              BoxShape
+                                  .circle,
+                        ),
+
+                        child:
+                            const Icon(
+                          Icons.inventory,
+
+                          color:
+                              Colors.blue,
+                        ),
                       ),
 
                       title: Text(
-                        material['name'],
+                        material[
+                            'name'],
                       ),
 
                       subtitle: Text(
                         '${material['qty']} ${material['unit']}',
                       ),
 
-                      trailing: IconButton(
+                      trailing:
+                          IconButton(
+
                         onPressed: () {
-                          controller.hapusMaterial(index);
+
+                          controller
+                              .hapusMaterial(
+                            index,
+                          );
                         },
 
-                        icon: const Icon(
+                        icon:
+                            const Icon(
                           Icons.delete,
-                          color: Colors.red,
+
+                          color:
+                              Colors.red,
                         ),
                       ),
                     ),
@@ -183,10 +419,44 @@ class TreatmentView extends StatelessWidget {
               width: double.infinity,
 
               child: ElevatedButton(
-                onPressed: controller.simpanTreatment,
+
+                style:
+                    ElevatedButton.styleFrom(
+
+                  backgroundColor:
+                      const Color(
+                    0xFF2196F3,
+                  ),
+
+                  padding:
+                      const EdgeInsets.symmetric(
+                    vertical: 16,
+                  ),
+
+                  shape:
+                      RoundedRectangleBorder(
+
+                    borderRadius:
+                        BorderRadius.circular(
+                      14,
+                    ),
+                  ),
+                ),
+
+                onPressed:
+                    controller.simpanTreatment,
 
                 child: const Text(
                   'Simpan Treatment',
+
+                  style: TextStyle(
+                    color: Colors.white,
+
+                    fontWeight:
+                        FontWeight.bold,
+
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ),

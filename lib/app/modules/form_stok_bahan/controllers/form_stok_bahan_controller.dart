@@ -8,25 +8,32 @@ class FormStokBahanController extends GetxController {
       FirebaseFirestore.instance;
 
   /// ================= CONTROLLER =================
-  final namaC = TextEditingController();
+  final namaC =
+      TextEditingController();
 
-  final stockC = TextEditingController();
+  final stockC =
+      TextEditingController();
 
-  final unitC = TextEditingController();
+  final unitC =
+      TextEditingController();
 
-  /// 🔥 BARU
-  final hargaC = TextEditingController();
+  final hargaC =
+      TextEditingController();
 
-  /// ================= EDIT =================
+  /// ================= STATE =================
   var isEdit = false.obs;
+
+  var isLoading = false.obs;
 
   String? bahanId;
 
   @override
   void onInit() {
+
     super.onInit();
 
-    final data = Get.arguments;
+    final data =
+        Get.arguments;
 
     if (data != null) {
 
@@ -38,7 +45,8 @@ class FormStokBahanController extends GetxController {
           data['name'] ?? '';
 
       stockC.text =
-          (data['stock'] ?? '').toString();
+          (data['stock'] ?? '')
+              .toString();
 
       unitC.text =
           data['unit'] ?? '';
@@ -48,12 +56,20 @@ class FormStokBahanController extends GetxController {
   /// ================= SIMPAN =================
   Future<void> simpanBahan() async {
 
+    /// ================= ANTIS SPAM =================
+    if (isLoading.value) return;
+
+    isLoading.value = true;
+
+    /// ================= VALIDASI =================
     if (namaC.text.trim().isEmpty) {
 
       Get.snackbar(
         'Validasi',
         'Nama bahan wajib diisi',
       );
+
+      isLoading.value = false;
 
       return;
     }
@@ -65,6 +81,8 @@ class FormStokBahanController extends GetxController {
         'Stok wajib diisi',
       );
 
+      isLoading.value = false;
+
       return;
     }
 
@@ -75,10 +93,12 @@ class FormStokBahanController extends GetxController {
         'Satuan wajib diisi',
       );
 
+      isLoading.value = false;
+
       return;
     }
 
-    /// 🔥 VALIDASI HARGA
+    /// ================= VALIDASI HARGA =================
     if (!isEdit.value &&
         hargaC.text.trim().isEmpty) {
 
@@ -86,6 +106,8 @@ class FormStokBahanController extends GetxController {
         'Validasi',
         'Harga beli wajib diisi',
       );
+
+      isLoading.value = false;
 
       return;
     }
@@ -95,12 +117,15 @@ class FormStokBahanController extends GetxController {
       stockC.text.trim(),
     );
 
-    if (stock == null || stock < 0) {
+    if (stock == null ||
+        stock < 0) {
 
       Get.snackbar(
         'Validasi',
         'Stok tidak valid',
       );
+
+      isLoading.value = false;
 
       return;
     }
@@ -115,6 +140,9 @@ class FormStokBahanController extends GetxController {
 
       'unit':
           unitC.text.trim(),
+
+      'created_at':
+          Timestamp.now(),
     };
 
     try {
@@ -127,13 +155,15 @@ class FormStokBahanController extends GetxController {
             .doc(bahanId)
             .update(data);
 
-        Get.back();
+        /// ================= PINDAH HALAMAN =================
+        Get.offNamed(
+          '/stok-bahan',
+        );
 
         Get.snackbar(
           'Sukses',
           'Bahan berhasil diupdate',
         );
-
       }
 
       /// ================= TAMBAH =================
@@ -152,18 +182,22 @@ class FormStokBahanController extends GetxController {
             'Harga tidak valid',
           );
 
+          isLoading.value = false;
+
           return;
         }
 
         /// ================= SIMPAN MATERIAL =================
         final materialDoc =
             await _firestore
-                .collection('materials')
+                .collection(
+                    'materials')
                 .add(data);
 
-        /// ================= SIMPAN PENGELUARAN =================
+        /// ================= SIMPAN PEMBELIAN =================
         await _firestore
-            .collection('material_purchases')
+            .collection(
+                'material_purchases')
             .add({
 
           'material_name':
@@ -185,7 +219,10 @@ class FormStokBahanController extends GetxController {
               materialDoc.id,
         });
 
-        Get.back();
+        /// ================= PINDAH HALAMAN =================
+        Get.offNamed(
+          '/stok-bahan',
+        );
 
         Get.snackbar(
           'Sukses',
@@ -199,6 +236,10 @@ class FormStokBahanController extends GetxController {
         'Error',
         e.toString(),
       );
+
+    } finally {
+
+      isLoading.value = false;
     }
   }
 

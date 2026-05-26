@@ -7,32 +7,79 @@ class FormStokBahanView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     final controller =
         Get.find<FormStokBahanController>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Obx(() => Text(
 
-          controller.isEdit.value
-              ? 'Edit Bahan'
-              : 'Tambah Bahan',
-        )),
+      backgroundColor:
+          Colors.grey[100],
+
+      /// ================= APPBAR =================
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
+
+        backgroundColor:
+            const Color(0xFF2196F3),
+
+        title: Obx(
+          () => Text(
+
+            controller.isEdit.value
+
+                ? 'Edit Bahan'
+
+                : 'Tambah Bahan',
+
+            style: const TextStyle(
+              color: Colors.white,
+
+              fontWeight:
+                  FontWeight.bold,
+
+              fontSize: 20,
+            ),
+          ),
+        ),
       ),
 
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding:
+            const EdgeInsets.all(16),
 
         child: Column(
           children: [
 
             /// ================= NAMA =================
             TextField(
-              controller: controller.namaC,
+              controller:
+                  controller.namaC,
 
-              decoration: const InputDecoration(
-                labelText: 'Nama Bahan',
-                border: OutlineInputBorder(),
+              decoration:
+                  InputDecoration(
+
+                labelText:
+                    'Nama Bahan',
+
+                filled: true,
+
+                fillColor:
+                    Colors.white,
+
+                border:
+                    OutlineInputBorder(
+
+                  borderRadius:
+                      BorderRadius
+                          .circular(14),
+                ),
+
+                prefixIcon:
+                    const Icon(
+                  Icons.inventory_2,
+                ),
               ),
             ),
 
@@ -40,12 +87,35 @@ class FormStokBahanView extends StatelessWidget {
 
             /// ================= STOCK =================
             TextField(
-              controller: controller.stockC,
-              keyboardType: TextInputType.number,
+              controller:
+                  controller.stockC,
 
-              decoration: const InputDecoration(
-                labelText: 'Stok',
-                border: OutlineInputBorder(),
+              keyboardType:
+                  TextInputType.number,
+
+              decoration:
+                  InputDecoration(
+
+                labelText:
+                    'Stok',
+
+                filled: true,
+
+                fillColor:
+                    Colors.white,
+
+                border:
+                    OutlineInputBorder(
+
+                  borderRadius:
+                      BorderRadius
+                          .circular(14),
+                ),
+
+                prefixIcon:
+                    const Icon(
+                  Icons.numbers,
+                ),
               ),
             ),
 
@@ -53,11 +123,32 @@ class FormStokBahanView extends StatelessWidget {
 
             /// ================= UNIT =================
             TextField(
-              controller: controller.unitC,
+              controller:
+                  controller.unitC,
 
-              decoration: const InputDecoration(
-                labelText: 'Satuan (ml, pcs, dll)',
-                border: OutlineInputBorder(),
+              decoration:
+                  InputDecoration(
+
+                labelText:
+                    'Satuan (ml, pcs, dll)',
+
+                filled: true,
+
+                fillColor:
+                    Colors.white,
+
+                border:
+                    OutlineInputBorder(
+
+                  borderRadius:
+                      BorderRadius
+                          .circular(14),
+                ),
+
+                prefixIcon:
+                    const Icon(
+                  Icons.straighten,
+                ),
               ),
             ),
 
@@ -66,8 +157,10 @@ class FormStokBahanView extends StatelessWidget {
             /// ================= HARGA BELI =================
             Obx(() {
 
-              /// 🔥 HANYA SAAT TAMBAH
-              if (controller.isEdit.value) {
+              /// ================= EDIT =================
+              if (controller
+                  .isEdit.value) {
+
                 return const SizedBox();
               }
 
@@ -75,20 +168,44 @@ class FormStokBahanView extends StatelessWidget {
                 children: [
 
                   TextField(
-                    controller: controller.hargaC,
+                    controller:
+                        controller.hargaC,
+
                     keyboardType:
-                        TextInputType.number,
+                        TextInputType
+                            .number,
 
                     decoration:
-                        const InputDecoration(
+                        InputDecoration(
+
                       labelText:
                           'Harga Beli Awal',
+
+                      filled: true,
+
+                      fillColor:
+                          Colors.white,
+
                       border:
-                          OutlineInputBorder(),
+                          OutlineInputBorder(
+
+                        borderRadius:
+                            BorderRadius
+                                .circular(
+                          14,
+                        ),
+                      ),
+
+                      prefixIcon:
+                          const Icon(
+                        Icons.payments,
+                      ),
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(
+                    height: 16,
+                  ),
                 ],
               );
             }),
@@ -98,11 +215,44 @@ class FormStokBahanView extends StatelessWidget {
               width: double.infinity,
 
               child: ElevatedButton(
+
+                style:
+                    ElevatedButton.styleFrom(
+
+                  backgroundColor:
+                      const Color(
+                    0xFF2196F3,
+                  ),
+
+                  padding:
+                      const EdgeInsets.symmetric(
+                    vertical: 16,
+                  ),
+
+                  shape:
+                      RoundedRectangleBorder(
+
+                    borderRadius:
+                        BorderRadius.circular(
+                      14,
+                    ),
+                  ),
+                ),
+
                 onPressed:
                     controller.simpanBahan,
 
                 child: const Text(
                   'Simpan',
+
+                  style: TextStyle(
+                    color: Colors.white,
+
+                    fontWeight:
+                        FontWeight.bold,
+
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ),

@@ -7,37 +7,81 @@ class StokBahanView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     final controller =
         Get.find<StokBahanController>();
 
     return Scaffold(
+
+      backgroundColor:
+          Colors.grey[100],
+
+      /// ================= APPBAR =================
       appBar: AppBar(
-        title: const Text('Stok Bahan'),
+        elevation: 0,
+        centerTitle: true,
+
+        backgroundColor:
+            const Color(0xFF2196F3),
+
+        title: const Text(
+          'Stok Bahan',
+
+          style: TextStyle(
+            color: Colors.white,
+
+            fontWeight:
+                FontWeight.bold,
+
+            fontSize: 20,
+          ),
+        ),
       ),
 
-      floatingActionButton: FloatingActionButton(
+      /// ================= FAB =================
+      floatingActionButton:
+          FloatingActionButton(
+
+        backgroundColor:
+            const Color(0xFF2196F3),
+
         onPressed: () {
-          Get.toNamed('/form-stok-bahan');
+
+          Get.toNamed(
+            '/form-stok-bahan',
+          );
         },
 
-        child: const Icon(Icons.add),
+        child: const Icon(
+          Icons.add,
+
+          color: Colors.white,
+        ),
       ),
 
-      body: StreamBuilder<List<Map<String, dynamic>>>(
-        stream: controller.getBahan(),
+      /// ================= BODY =================
+      body: StreamBuilder<
+          List<Map<String, dynamic>>>(
+
+        stream:
+            controller.getBahan(),
 
         builder: (context, snapshot) {
 
+          /// ================= LOADING =================
           if (snapshot.connectionState ==
               ConnectionState.waiting) {
 
             return const Center(
-              child: CircularProgressIndicator(),
+              child:
+                  CircularProgressIndicator(),
             );
           }
 
-          final data = snapshot.data ?? [];
+          final data =
+              snapshot.data ?? [];
 
+          /// ================= EMPTY =================
           if (data.isEmpty) {
 
             return const Center(
@@ -48,34 +92,77 @@ class StokBahanView extends StatelessWidget {
           }
 
           return ListView.builder(
+
+            padding:
+                const EdgeInsets.all(12),
+
             itemCount: data.length,
 
-            itemBuilder: (context, index) {
+            itemBuilder:
+                (context, index) {
 
-              final bahan = data[index];
+              final bahan =
+                  data[index];
 
               final stock =
                   bahan['stock'] ?? 0;
 
               return Card(
+
+                elevation: 2,
+
                 margin:
-                    const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
+                    const EdgeInsets.only(
+                  bottom: 12,
+                ),
+
+                shape:
+                    RoundedRectangleBorder(
+
+                  borderRadius:
+                      BorderRadius.circular(
+                    18,
+                  ),
                 ),
 
                 child: ListTile(
 
-                  /// ================= ICON =================
-                  leading: CircleAvatar(
-                    backgroundColor:
-                        stock <= 10
-                            ? Colors.red
-                            : Colors.blue,
+                  contentPadding:
+                      const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
 
-                    child: const Icon(
-                      Icons.inventory,
-                      color: Colors.white,
+                  /// ================= ICON =================
+                  leading: Container(
+
+                    padding:
+                        const EdgeInsets.all(
+                      12,
+                    ),
+
+                    decoration:
+                        BoxDecoration(
+
+                      color: stock <= 10
+
+                          ? Colors.red
+                              .withOpacity(0.15)
+
+                          : Colors.blue
+                              .withOpacity(0.15),
+
+                      shape:
+                          BoxShape.circle,
+                    ),
+
+                    child: Icon(
+
+                      Icons.inventory_2,
+
+                      color: stock <= 10
+                          ? Colors.red
+                          : Colors.blue,
                     ),
                   ),
 
@@ -83,50 +170,64 @@ class StokBahanView extends StatelessWidget {
                   title: Text(
                     bahan['name'] ?? '-',
 
-                    style: const TextStyle(
+                    style:
+                        const TextStyle(
                       fontWeight:
                           FontWeight.bold,
+
+                      fontSize: 16,
                     ),
                   ),
 
                   /// ================= SUBTITLE =================
-                  subtitle: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
+                  subtitle: Padding(
+                    padding:
+                        const EdgeInsets.only(
+                      top: 6,
+                    ),
 
-                    children: [
+                    child: Text(
+                      'Stok: ${bahan['stock']} ${bahan['unit']}',
 
-                      const SizedBox(height: 4),
+                      style: TextStyle(
 
-                      Text(
-                        'Stok: ${bahan['stock']} ${bahan['unit']}',
+                        color: stock <= 10
+                            ? Colors.red
+                            : Colors.black87,
 
-                        style: TextStyle(
-                          color:
-                              stock <= 10
-                                  ? Colors.red
-                                  : Colors.black,
+                        fontWeight: stock <= 10
 
-                          fontWeight:
-                              stock <= 10
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                        ),
+                            ? FontWeight.bold
+
+                            : FontWeight.normal,
                       ),
-                    ],
+                    ),
                   ),
 
                   /// ================= MENU =================
-                  trailing: PopupMenuButton<String>(
+                  trailing:
+                      PopupMenuButton<String>(
+
+                    shape:
+                        RoundedRectangleBorder(
+
+                      borderRadius:
+                          BorderRadius.circular(
+                        14,
+                      ),
+                    ),
 
                     onSelected: (value) {
 
                       /// ================= TAMBAH STOK =================
-                      if (value == 'tambah') {
+                      if (value ==
+                          'tambah') {
 
-                        controller.tambahStok(
+                        controller
+                            .tambahStok(
 
-                          id: bahan['id'],
+                          id:
+                              bahan['id'],
 
                           nama:
                               bahan['name'],
@@ -140,76 +241,103 @@ class StokBahanView extends StatelessWidget {
                       }
 
                       /// ================= EDIT =================
-                      if (value == 'edit') {
+                      if (value ==
+                          'edit') {
 
                         Get.toNamed(
                           '/form-stok-bahan',
 
-                          arguments: bahan,
+                          arguments:
+                              bahan,
                         );
                       }
 
                       /// ================= DELETE =================
-                      if (value == 'hapus') {
+                      if (value ==
+                          'hapus') {
 
-                        controller.hapusBahan(
+                        controller
+                            .hapusBahan(
                           bahan['id'],
                         );
                       }
                     },
 
-                    itemBuilder: (context) => [
+                    itemBuilder:
+                        (context) => [
 
-                      /// ================= TAMBAH STOK =================
+                      /// ================= TAMBAH =================
                       const PopupMenuItem(
-                        value: 'tambah',
+                        value:
+                            'tambah',
 
                         child: Row(
                           children: [
 
-                            Icon(Icons.add),
+                            Icon(
+                              Icons.add,
+                            ),
 
-                            SizedBox(width: 8),
+                            SizedBox(
+                              width: 8,
+                            ),
 
-                            Text('Tambah Stok'),
+                            Text(
+                              'Tambah Stok',
+                            ),
                           ],
                         ),
                       ),
 
                       /// ================= EDIT =================
                       const PopupMenuItem(
-                        value: 'edit',
+                        value:
+                            'edit',
 
                         child: Row(
                           children: [
 
-                            Icon(Icons.edit),
+                            Icon(
+                              Icons.edit,
+                            ),
 
-                            SizedBox(width: 8),
+                            SizedBox(
+                              width: 8,
+                            ),
 
-                            Text('Edit'),
+                            Text(
+                              'Edit',
+                            ),
                           ],
                         ),
                       ),
 
                       /// ================= DELETE =================
                       const PopupMenuItem(
-                        value: 'hapus',
+                        value:
+                            'hapus',
 
                         child: Row(
                           children: [
 
                             Icon(
                               Icons.delete,
-                              color: Colors.red,
+
+                              color:
+                                  Colors.red,
                             ),
 
-                            SizedBox(width: 8),
+                            SizedBox(
+                              width: 8,
+                            ),
 
                             Text(
                               'Hapus',
-                              style: TextStyle(
-                                color: Colors.red,
+
+                              style:
+                                  TextStyle(
+                                color:
+                                    Colors.red,
                               ),
                             ),
                           ],

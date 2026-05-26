@@ -20,71 +20,22 @@ class DashboardView extends StatelessWidget {
       /// ================= APPBAR =================
       appBar: AppBar(
         elevation: 0,
+        centerTitle: true,
         backgroundColor:
             const Color(0xFF2196F3),
         automaticallyImplyLeading: false,
 
-        title: Row(
-          children: [
+        title: const Text(
+          'Eza Shoes',
 
-            /// ================= LOGO =================
-            Container(
-              padding:
-                  const EdgeInsets.all(8),
+          style: TextStyle(
+            color: Colors.white,
 
-              decoration: BoxDecoration(
-                color: Colors.white
-                    .withOpacity(0.2),
+            fontWeight:
+                FontWeight.bold,
 
-                borderRadius:
-                    BorderRadius.circular(
-                  12,
-                ),
-              ),
-
-              child: const Icon(
-                Icons.cleaning_services,
-
-                color: Colors.white,
-
-                size: 22,
-              ),
-            ),
-
-            const SizedBox(width: 12),
-
-            /// ================= TITLE =================
-            const Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-
-              children: [
-
-                Text(
-                  'Eza Shoes',
-
-                  style: TextStyle(
-                    color: Colors.white,
-
-                    fontWeight:
-                        FontWeight.bold,
-
-                    fontSize: 18,
-                  ),
-                ),
-
-                Text(
-                  'Cleaner App',
-
-                  style: TextStyle(
-                    color: Colors.white70,
-
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ],
+            fontSize: 20,
+          ),
         ),
 
         actions: [
@@ -149,44 +100,20 @@ class DashboardView extends StatelessWidget {
 
             children: [
 
-              /// ================= GREETING =================
-              Obx(() => Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment
-                            .start,
+              /// ================= USERNAME =================
+              // Obx(() => Text(
+              //       authC.nickname.value,
 
-                    children: [
+              //       style:
+              //           const TextStyle(
+              //         fontSize: 24,
 
-                      const Text(
-                        'Selamat Datang 👋',
+              //         fontWeight:
+              //             FontWeight.bold,
+              //       ),
+              //     )),
 
-                        style: TextStyle(
-                          fontSize: 16,
-
-                          color: Colors.grey,
-                        ),
-                      ),
-
-                      const SizedBox(
-                        height: 4,
-                      ),
-
-                      Text(
-                        authC.nickname.value,
-
-                        style:
-                            const TextStyle(
-                          fontSize: 24,
-
-                          fontWeight:
-                              FontWeight
-                                  .bold,
-                        ),
-                      ),
-                    ],
-                  )),
-
-              const SizedBox(height: 20),
+              const SizedBox(height: 5),
 
               /// ================= CARD DASHBOARD =================
               Obx(() => Row(

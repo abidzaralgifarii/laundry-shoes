@@ -164,236 +164,679 @@ class PesananController extends GetxController {
     await _firestore.collection('orders').doc(id).delete();
   }
 
-  /// ================= PDF =================
-  Future<void> cetakStrukPDF(Map<String, dynamic> data) async {
-    final pdf = pw.Document();
+/// ================= PDF =================
+Future<void> cetakStrukPDF(
+  Map<String, dynamic> data,
+) async {
 
-    final tanggal =
-        DateFormat('dd MMM yyyy, HH:mm').format(DateTime.now());
+  final pdf = pw.Document();
 
-    final estimasi = data['estimated_finish'];
-    final orderId = data['id'] ?? '';
+  final tanggal =
+      DateFormat(
+        'dd MMM yyyy, HH:mm',
+      ).format(DateTime.now());
 
-    if (orderId.isEmpty) {
-      Get.snackbar('Error', 'ID pesanan tidak ditemukan');
-      return;
-    }
+  final estimasi =
+      data['estimated_finish'];
 
-    final link =
-        'https://laundry-shoes-60205.web.app/#/order/$orderId';
+  final orderId =
+      data['id'] ?? '';
 
-    pdf.addPage(
-      pw.Page(
-        build: (context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              /// HEADER
-              pw.Center(
-                child: pw.Text(
-                  'Eza Shoes',
-                  style: pw.TextStyle(
-                    fontSize: 18,
-                    fontWeight: pw.FontWeight.bold,
+  if (orderId.isEmpty) {
+
+    Get.snackbar(
+      'Error',
+      'ID pesanan tidak ditemukan',
+    );
+
+    return;
+  }
+
+  final link =
+      'https://laundry-shoes-60205.web.app/#/order/$orderId';
+
+  /// =====================================================
+  /// 🔥 HALAMAN 1
+  /// =====================================================
+  pdf.addPage(
+
+    pw.Page(
+
+      pageFormat:
+          PdfPageFormat.a6,
+
+      margin:
+          const pw.EdgeInsets.all(18),
+
+      build: (context) {
+
+        return pw.Column(
+
+          crossAxisAlignment:
+              pw.CrossAxisAlignment.start,
+
+          children: [
+
+            /// ================= HEADER =================
+            pw.Center(
+
+              child: pw.Column(
+
+                children: [
+
+                  pw.Text(
+                    'EZA SHOES',
+
+                    style: pw.TextStyle(
+                      fontSize: 20,
+
+                      fontWeight:
+                          pw.FontWeight.bold,
+                    ),
                   ),
+
+                  pw.SizedBox(height: 3),
+
+                  pw.Text(
+                    'Laundry Sepatu Premium',
+
+                    style: const pw.TextStyle(
+                      fontSize: 10,
+                    ),
+                  ),
+
+                  pw.SizedBox(height: 2),
+
+                  pw.Text(
+                    'Fast Clean • Deep Clean • Repaint',
+
+                    style: const pw.TextStyle(
+                      fontSize: 8,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            pw.SizedBox(height: 12),
+
+            pw.Divider(),
+
+            /// ================= INFO =================
+            _buildRowPdf(
+              'Tanggal',
+              tanggal,
+            ),
+
+            _buildRowPdf(
+              'Customer',
+              '${data['customer_name']}',
+            ),
+
+            _buildRowPdf(
+              'Status',
+              '${data['status']}',
+            ),
+
+            if (estimasi != null)
+
+              _buildRowPdf(
+                'Estimasi',
+
+                DateFormat(
+                  'dd MMM yyyy',
+                ).format(
+                  estimasi.toDate(),
                 ),
               ),
 
-              pw.SizedBox(height: 4),
-              pw.Center(child: pw.Text('Laundry Sepatu')),
-              pw.SizedBox(height: 10),
+            pw.Divider(),
 
-              pw.Text('Tanggal : $tanggal'),
-              pw.Text('Customer : ${data['customer_name']}'),
+            pw.SizedBox(height: 8),
 
-              if (estimasi != null)
-                pw.Text(
-                  'Estimasi selesai: ${DateFormat('dd MMM yyyy').format(estimasi.toDate())}',
+            /// ================= TITLE =================
+            pw.Container(
+
+              padding:
+                  const pw.EdgeInsets.symmetric(
+                vertical: 6,
+                horizontal: 8,
+              ),
+
+              decoration:
+                  pw.BoxDecoration(
+
+                color:
+                    PdfColors.blue50,
+
+                borderRadius:
+                    pw.BorderRadius.circular(
+                  4,
                 ),
+              ),
 
-              pw.Divider(),
+              child: pw.Text(
 
-              /// LIST ITEM
-              ...List.generate(data['items'].length, (index) {
-                final item = data['items'][index];
+                'DETAIL PESANAN',
 
-                return pw.Padding(
-                  padding: const pw.EdgeInsets.only(bottom: 6),
+                style: pw.TextStyle(
+                  fontWeight:
+                      pw.FontWeight.bold,
+
+                  fontSize: 11,
+                ),
+              ),
+            ),
+
+            pw.SizedBox(height: 10),
+
+            /// ================= LIST ITEM =================
+            ...List.generate(
+              data['items'].length,
+
+              (index) {
+
+                final item =
+                    data['items'][index];
+
+                return pw.Container(
+
+                  margin:
+                      const pw.EdgeInsets.only(
+                    bottom: 8,
+                  ),
+
+                  padding:
+                      const pw.EdgeInsets.all(
+                    8,
+                  ),
+
+                  decoration:
+                      pw.BoxDecoration(
+
+                    border: pw.Border.all(
+                      color:
+                          PdfColors.grey300,
+                    ),
+
+                    borderRadius:
+                        pw.BorderRadius.circular(
+                      5,
+                    ),
+                  ),
+
                   child: pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+
+                    crossAxisAlignment:
+                        pw.CrossAxisAlignment
+                            .start,
+
                     children: [
+
                       pw.Text(
-                        '${item['shoe_type']} - ${item['treatment']}',
+
+                        '${item['shoe_type']}',
+
+                        style: pw.TextStyle(
+                          fontWeight:
+                              pw.FontWeight.bold,
+
+                          fontSize: 11,
+                        ),
                       ),
+
+                      pw.SizedBox(height: 3),
+
                       pw.Text(
-                        'Estimasi: ${item['duration'] ?? '-'}',
-                        style: pw.TextStyle(fontSize: 10),
+                        'Treatment : ${item['treatment']}',
+                        style:
+                            const pw.TextStyle(
+                          fontSize: 9,
+                        ),
                       ),
+
+                      pw.Text(
+                        'Estimasi : ${item['duration'] ?? '-'}',
+
+                        style:
+                            const pw.TextStyle(
+                          fontSize: 9,
+                        ),
+                      ),
+
+                      pw.SizedBox(height: 5),
+
                       pw.Row(
+
                         mainAxisAlignment:
-                            pw.MainAxisAlignment.spaceBetween,
+                            pw.MainAxisAlignment
+                                .spaceBetween,
+
                         children: [
-                          pw.Text('x${item['qty']}'),
-                          pw.Text('Rp ${item['total']}'),
+
+                          pw.Text(
+                            'Qty : ${item['qty']}',
+                            style:
+                                const pw.TextStyle(
+                              fontSize: 9,
+                            ),
+                          ),
+
+                          pw.Text(
+                            'Rp ${item['total']}',
+
+                            style: pw.TextStyle(
+                              fontWeight:
+                                  pw.FontWeight
+                                      .bold,
+
+                              fontSize: 10,
+                            ),
+                          ),
                         ],
                       ),
                     ],
                   ),
                 );
-              }),
+              },
+            ),
 
-              pw.Divider(),
+            pw.Divider(),
 
-              /// 🔥 SUBTOTAL
+            /// ================= SUBTOTAL =================
+            _buildRowPdf(
+              'Subtotal',
+              'Rp ${data['total_price']}',
+            ),
+
+            /// ================= DISKON =================
+            if (data['discount'] != null &&
+                data['discount'] > 0)
+
               pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Text('Subtotal'),
-                  pw.Text('Rp ${data['total_price']}'),
-                ],
-              ),
 
-              /// 🔥 DISKON
-              if (data['discount'] != null && data['discount'] > 0)
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text(
-                      'Diskon (${data['promo_name'] ?? '-'})',
-                      style: pw.TextStyle(color: PdfColors.red),
-                    ),
-                    pw.Text(
-                      '- Rp ${data['discount']}',
-                      style: pw.TextStyle(color: PdfColors.red),
-                    ),
-                  ],
-                ),
-
-              pw.Divider(),
-
-              /// 🔥 TOTAL AKHIR
-              pw.Row(
                 mainAxisAlignment:
-                    pw.MainAxisAlignment.spaceBetween,
+                    pw.MainAxisAlignment
+                        .spaceBetween,
+
                 children: [
+
                   pw.Text(
-                    'TOTAL BAYAR',
-                    style: pw.TextStyle(
-                        fontWeight: pw.FontWeight.bold),
+                    'Diskon',
+
+                    style: const pw.TextStyle(
+                      color: PdfColors.red,
+                      fontSize: 10,
+                    ),
                   ),
+
                   pw.Text(
-                    'Rp ${data['final_price'] ?? data['total_price']}',
-                    style: pw.TextStyle(
-                        fontWeight: pw.FontWeight.bold),
+                    '- Rp ${data['discount']}',
+
+                    style: const pw.TextStyle(
+                      color: PdfColors.red,
+                      fontSize: 10,
+                    ),
                   ),
                 ],
               ),
 
-              pw.SizedBox(height: 8),
-              pw.Text('Status: ${data['status']}'),
+            pw.SizedBox(height: 8),
 
-              pw.SizedBox(height: 20),
+            /// ================= TOTAL =================
+            pw.Container(
 
-              /// QR
-              pw.Center(
-                child: pw.Column(
-                  children: [
-                    pw.BarcodeWidget(
-                      barcode: pw.Barcode.qrCode(),
-                      data: link,
-                      width: 100,
-                      height: 100,
+              padding:
+                  const pw.EdgeInsets.all(
+                10,
+              ),
+
+              decoration:
+                  pw.BoxDecoration(
+
+                color:
+                    PdfColors.blue100,
+
+                borderRadius:
+                    pw.BorderRadius.circular(
+                  6,
+                ),
+              ),
+
+              child: pw.Row(
+
+                mainAxisAlignment:
+                    pw.MainAxisAlignment
+                        .spaceBetween,
+
+                children: [
+
+                  pw.Text(
+
+                    'TOTAL',
+
+                    style: pw.TextStyle(
+                      fontWeight:
+                          pw.FontWeight.bold,
+
+                      fontSize: 12,
                     ),
-                    pw.SizedBox(height: 5),
-                    pw.Text(
-                      'Scan untuk cek status pesanan',
-                      style: pw.TextStyle(fontSize: 10),
+                  ),
+
+                  pw.Text(
+
+                    'Rp ${data['final_price'] ?? data['total_price']}',
+
+                    style: pw.TextStyle(
+                      fontWeight:
+                          pw.FontWeight.bold,
+
+                      fontSize: 12,
                     ),
-                  ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    ),
+  );
+
+  /// =====================================================
+  /// 🔥 HALAMAN 2 UNTUK QR
+  /// =====================================================
+  pdf.addPage(
+
+    pw.Page(
+
+      pageFormat:
+          PdfPageFormat.a6,
+
+      margin:
+          const pw.EdgeInsets.all(18),
+
+      build: (context) {
+
+        return pw.Center(
+
+          child: pw.Column(
+
+            mainAxisAlignment:
+                pw.MainAxisAlignment.center,
+
+            children: [
+
+              pw.Text(
+                'SCAN QR UNTUK\nCEK STATUS PESANAN',
+
+                textAlign:
+                    pw.TextAlign.center,
+
+                style: pw.TextStyle(
+                  fontSize: 14,
+
+                  fontWeight:
+                      pw.FontWeight.bold,
                 ),
               ),
 
               pw.SizedBox(height: 20),
 
-              pw.Center(
-                child: pw.Text('Terima kasih 🙏'),
+              pw.BarcodeWidget(
+
+                barcode:
+                    pw.Barcode.qrCode(),
+
+                data: link,
+
+                width: 150,
+                height: 150,
+              ),
+
+              pw.SizedBox(height: 20),
+
+              pw.Text(
+                'Eza Shoes Cleaner',
+
+                style: pw.TextStyle(
+                  fontWeight:
+                      pw.FontWeight.bold,
+
+                  fontSize: 12,
+                ),
+              ),
+
+              pw.SizedBox(height: 5),
+
+              pw.Text(
+                'Terima kasih 🙏',
+
+                style:
+                    const pw.TextStyle(
+                  fontSize: 10,
+                ),
               ),
             ],
-          );
-        },
-      ),
+          ),
+        );
+      },
+    ),
+  );
+
+  await Printing.layoutPdf(
+
+    onLayout: (format) async {
+
+      return pdf.save();
+    },
+  );
+}
+
+/// ================= ROW PDF =================
+pw.Widget _buildRowPdf(
+  String title,
+  String value,
+) {
+
+  return pw.Padding(
+
+    padding:
+        const pw.EdgeInsets.only(
+      bottom: 4,
+    ),
+
+    child: pw.Row(
+
+      mainAxisAlignment:
+          pw.MainAxisAlignment
+              .spaceBetween,
+
+      children: [
+
+        pw.Text(
+          title,
+
+          style: const pw.TextStyle(
+            fontSize: 9,
+          ),
+        ),
+
+        pw.Text(
+          value,
+
+          style: pw.TextStyle(
+            fontWeight:
+                pw.FontWeight.bold,
+
+            fontSize: 9,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+  /// ================= WHATSAPP =================
+Future<void> kirimWhatsApp(
+  Map<String, dynamic> data,
+) async {
+
+  String phone =
+      data['phone'] ?? '';
+
+  if (phone.isEmpty) {
+
+    Get.snackbar(
+      'Error',
+      'Nomor WA tidak tersedia',
     );
 
-    await Printing.layoutPdf(
-      onLayout: (format) async => pdf.save(),
-    );
+    return;
   }
 
-  /// ================= WHATSAPP =================
-  Future<void> kirimWhatsApp(Map<String, dynamic> data) async {
-    String phone = data['phone'] ?? '';
+  /// ================= FORMAT NOMOR =================
+  if (phone.startsWith('0')) {
 
-    if (phone.isEmpty) {
-      Get.snackbar('Error', 'Nomor WA tidak tersedia');
-      return;
-    }
+    phone =
+        '62${phone.substring(1)}';
+  }
 
-    if (phone.startsWith('0')) {
-      phone = '62${phone.substring(1)}';
-    }
+  final estimasi =
+      data['estimated_finish'];
 
-    final estimasi = data['estimated_finish'];
-    final orderId = data['id'];
+  final orderId =
+      data['id'];
 
-    if (orderId == null || orderId.isEmpty) {
-      Get.snackbar('Error', 'ID pesanan tidak ditemukan');
-      return;
-    }
+  if (orderId == null ||
+      orderId.isEmpty) {
 
-    final link =
-        'https://laundry-shoes-60205.web.app/#/order/$orderId';
+    Get.snackbar(
+      'Error',
+      'ID pesanan tidak ditemukan',
+    );
 
-    String pesan = 'Halo ${data['customer_name']}\n\n';
-    pesan += 'Berikut pesanan Anda:\n\n';
+    return;
+  }
 
-    for (var item in data['items']) {
-      pesan += '- ${item['shoe_type']} (${item['treatment']})\n';
-      pesan += '  Estimasi: ${item['duration'] ?? '-'}\n';
-      pesan += '  x${item['qty']} = Rp ${item['total']}\n\n';
-    }
+  final link =
+      'https://laundry-shoes-60205.web.app/#/order/$orderId';
 
-    if (estimasi != null) {
-      final tgl =
-          DateFormat('dd MMM yyyy').format(estimasi.toDate());
-      pesan += 'Estimasi selesai: $tgl\n';
-    }
+  /// ================= PESAN =================
+  String pesan = '';
 
-    /// 🔥 PROMO
-    pesan += '\nSubtotal: Rp ${data['total_price']}';
+  pesan +=
+      '👟 *EZA SHOES CLEANER*\n';
 
-    if (data['discount'] != null && data['discount'] > 0) {
-      pesan +=
-          '\nDiskon (${data['promo_name'] ?? '-'}) : -Rp ${data['discount']}';
-    }
+  pesan +=
+      '━━━━━━━━━━━━━━━\n\n';
+
+  pesan +=
+      'Halo *${data['customer_name']}* 👋\n\n';
+
+  pesan +=
+      'Berikut detail pesanan laundry sepatu Anda:\n\n';
+
+  /// ================= ITEM =================
+  for (var item in data['items']) {
 
     pesan +=
-        '\nTotal Bayar: Rp ${data['final_price'] ?? data['total_price']}';
+        '📦 *${item['shoe_type']}*\n';
 
-    pesan += '\nStatus: ${data['status']}';
+    pesan +=
+        '• Treatment : ${item['treatment']}\n';
 
-    pesan += '\n\n🔗 Cek status pesanan:\n$link';
+    pesan +=
+        '• Qty : ${item['qty']}\n';
 
-    final url = Uri.parse(
-      'https://wa.me/$phone?text=${Uri.encodeComponent(pesan)}',
+    pesan +=
+        '• Estimasi : ${item['duration'] ?? '-'}\n';
+
+    pesan +=
+        '• Harga : Rp ${item['total']}\n\n';
+  }
+
+  /// ================= ESTIMASI =================
+  if (estimasi != null) {
+
+    final tgl =
+        DateFormat(
+          'dd MMM yyyy',
+        ).format(
+          estimasi.toDate(),
+        );
+
+    pesan +=
+        '📅 *Estimasi selesai:* $tgl\n\n';
+  }
+
+  pesan +=
+      '━━━━━━━━━━━━━━━\n';
+
+  /// ================= SUBTOTAL =================
+  pesan +=
+      '💰 *Subtotal*\n';
+
+  pesan +=
+      'Rp ${data['total_price']}\n\n';
+
+  /// ================= DISKON =================
+  if (data['discount'] != null &&
+      data['discount'] > 0) {
+
+    pesan +=
+        '🏷️ *Diskon (${data['promo_name'] ?? '-'})*\n';
+
+    pesan +=
+        '- Rp ${data['discount']}\n\n';
+  }
+
+  /// ================= TOTAL =================
+  pesan +=
+      '🧾 *TOTAL BAYAR*\n';
+
+  pesan +=
+      'Rp ${data['final_price'] ?? data['total_price']}\n\n';
+
+  /// ================= STATUS =================
+  pesan +=
+      '📌 Status : *${data['status']}*\n\n';
+
+  /// ================= LINK =================
+  pesan +=
+      '🔗 Cek status pesanan:\n';
+
+  pesan +=
+      '$link\n\n';
+
+  /// ================= FOOTER =================
+  pesan +=
+      'Terima kasih telah menggunakan jasa kami 🙏\n\n';
+
+  pesan +=
+      '*Eza Shoes Cleaner*';
+
+  final url = Uri.parse(
+
+    'https://wa.me/$phone?text=${Uri.encodeComponent(pesan)}',
+  );
+
+  try {
+
+    await launchUrl(
+
+      url,
+
+      mode:
+          LaunchMode
+              .externalApplication,
     );
 
-    try {
-      await launchUrl(
-        url,
-        mode: LaunchMode.externalApplication,
-      );
-    } catch (e) {
-      Get.snackbar('Error', 'Gagal membuka WhatsApp');
-    }
+  } catch (e) {
+
+    Get.snackbar(
+      'Error',
+      'Gagal membuka WhatsApp',
+    );
   }
+}
 }

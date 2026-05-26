@@ -7,26 +7,39 @@ class DataPelangganView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<DataPelangganController>();
+    final controller =
+        Get.find<DataPelangganController>();
 
     return Scaffold(
+      backgroundColor: Colors.grey[100],
+
       appBar: AppBar(
-        title: const Text('Data Pelanggan'),
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: const Color(0xFF2196F3),
+        title: const Text(
+          'Data Pelanggan',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
 
-      /// 🔥 BUTTON TAMBAH
       floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF2196F3),
         onPressed: () {
           Get.toNamed('/form-pelanggan');
         },
-        child: const Icon(Icons.add),
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
       ),
 
-      /// 🔥 LIST DATA
       body: StreamBuilder<List<Map<String, dynamic>>>(
         stream: controller.getPelanggan(),
         builder: (context, snapshot) {
-
           if (snapshot.connectionState ==
               ConnectionState.waiting) {
             return const Center(
@@ -43,40 +56,58 @@ class DataPelangganView extends StatelessWidget {
           }
 
           return ListView.builder(
+            padding: const EdgeInsets.all(12),
             itemCount: data.length,
             itemBuilder: (context, index) {
               final pelanggan = data[index];
 
               return Card(
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
+                elevation: 2,
+                margin: const EdgeInsets.only(bottom: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
                 ),
                 child: ListTile(
-
-                  /// 🔥 ICON
-                  leading: const CircleAvatar(
-                    child: Icon(Icons.person),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
                   ),
 
-                  /// 🔥 NAMA
+                  leading: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.person,
+                      color: Color(0xFF2196F3),
+                    ),
+                  ),
+
                   title: Text(
                     pelanggan['name'] ?? '-',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
                   ),
 
-                  /// 🔥 NO HP
-                  subtitle: Text(
-                    pelanggan['phone'] ?? '-',
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      pelanggan['phone'] ?? '-',
+                      style: TextStyle(
+                        color: Colors.grey[700],
+                      ),
+                    ),
                   ),
 
-                  /// 🔥 ACTION
                   trailing: PopupMenuButton<String>(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                     onSelected: (value) {
-
-                      /// EDIT
                       if (value == 'edit') {
                         Get.toNamed(
                           '/form-pelanggan',
@@ -84,14 +115,12 @@ class DataPelangganView extends StatelessWidget {
                         );
                       }
 
-                      /// HAPUS
                       if (value == 'hapus') {
                         controller.hapusPelanggan(
                           pelanggan['id'],
                         );
                       }
 
-                      /// RIWAYAT
                       if (value == 'riwayat') {
                         Get.toNamed(
                           '/riwayat-pelanggan',
@@ -99,22 +128,44 @@ class DataPelangganView extends StatelessWidget {
                         );
                       }
                     },
-
                     itemBuilder: (context) => const [
-
                       PopupMenuItem(
                         value: 'riwayat',
-                        child: Text('Riwayat'),
+                        child: Row(
+                          children: [
+                            Icon(Icons.history),
+                            SizedBox(width: 8),
+                            Text('Riwayat'),
+                          ],
+                        ),
                       ),
-
                       PopupMenuItem(
                         value: 'edit',
-                        child: Text('Edit'),
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit),
+                            SizedBox(width: 8),
+                            Text('Edit'),
+                          ],
+                        ),
                       ),
-
                       PopupMenuItem(
                         value: 'hapus',
-                        child: Text('Hapus'),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Hapus',
+                              style: TextStyle(
+                                color: Colors.red,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

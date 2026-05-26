@@ -3,36 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class StokBahanController extends GetxController {
-
   final FirebaseFirestore _firestore =
       FirebaseFirestore.instance;
 
   /// ================= GET BAHAN =================
   Stream<List<Map<String, dynamic>>> getBahan() {
-
     return _firestore
         .collection('materials')
         .orderBy('name')
         .snapshots()
         .map((snapshot) {
-
       return snapshot.docs.map((doc) {
-
         final data = doc.data();
 
         data['id'] = doc.id;
 
         return data;
-
       }).toList();
     });
   }
 
   /// ================= HAPUS =================
   Future<void> hapusBahan(String id) async {
-
     try {
-
       await _firestore
           .collection('materials')
           .doc(id)
@@ -42,9 +35,7 @@ class StokBahanController extends GetxController {
         'Sukses',
         'Bahan berhasil dihapus',
       );
-
     } catch (e) {
-
       Get.snackbar(
         'Error',
         e.toString(),
@@ -59,133 +50,171 @@ class StokBahanController extends GetxController {
     required int stockSekarang,
     required String unit,
   }) async {
-
     final qtyC = TextEditingController();
     final hargaC = TextEditingController();
 
     await Get.dialog(
-
       AlertDialog(
-
-        title: Text(
-          'Tambah Stok $nama',
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
         ),
 
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-            /// ================= QTY =================
-            TextField(
-              controller: qtyC,
-              keyboardType: TextInputType.number,
-
-              decoration: const InputDecoration(
-                labelText: 'Qty Tambah',
-                border: OutlineInputBorder(),
+            const Text(
+              'Tambah Stok',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
               ),
             ),
-
-            const SizedBox(height: 12),
-
-            /// ================= HARGA =================
-            TextField(
-              controller: hargaC,
-              keyboardType: TextInputType.number,
-
-              decoration: const InputDecoration(
-                labelText: 'Harga Beli',
-                border: OutlineInputBorder(),
+            const SizedBox(height: 4),
+            Text(
+              nama,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
               ),
             ),
           ],
         ),
 
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// ================= QTY =================
+            TextField(
+              controller: qtyC,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: 'Qty Tambah',
+                suffixText: unit,
+                prefixIcon: const Icon(Icons.add_box),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 14),
+
+            /// ================= HARGA =================
+            TextField(
+              controller: hargaC,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: 'Harga Beli',
+                prefixIcon: const Icon(Icons.payments),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+
         actions: [
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  onPressed: () {
+                    Get.back();
+                  },
+                  child: const Text('Batal'),
+                ),
+              ),
 
-          /// ================= BATAL =================
-          TextButton(
-            onPressed: () {
-              Get.back();
-            },
+              const SizedBox(width: 10),
 
-            child: const Text('Batal'),
-          ),
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2196F3),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  onPressed: () async {
+                    final qty =
+                        int.tryParse(qtyC.text.trim());
 
-          /// ================= SIMPAN =================
-          ElevatedButton(
-            onPressed: () async {
+                    final harga =
+                        int.tryParse(hargaC.text.trim());
 
-              final qty =
-                  int.tryParse(qtyC.text.trim());
+                    if (qty == null || qty <= 0) {
+                      Get.snackbar(
+                        'Validasi',
+                        'Qty tidak valid',
+                      );
+                      return;
+                    }
 
-              final harga =
-                  int.tryParse(hargaC.text.trim());
+                    if (harga == null || harga <= 0) {
+                      Get.snackbar(
+                        'Validasi',
+                        'Harga tidak valid',
+                      );
+                      return;
+                    }
 
-              if (qty == null || qty <= 0) {
+                    try {
+                      await _firestore
+                          .collection('materials')
+                          .doc(id)
+                          .update({
+                        'stock': stockSekarang + qty,
+                      });
 
-                Get.snackbar(
-                  'Validasi',
-                  'Qty tidak valid',
-                );
+                      await _firestore
+                          .collection('material_purchases')
+                          .add({
+                        'material_name': nama,
+                        'qty': qty,
+                        'unit': unit,
+                        'price': harga,
+                        'created_at': Timestamp.now(),
+                      });
 
-                return;
-              }
+                      qtyC.dispose();
+                      hargaC.dispose();
 
-              if (harga == null || harga <= 0) {
+                      Get.back();
 
-                Get.snackbar(
-                  'Validasi',
-                  'Harga tidak valid',
-                );
-
-                return;
-              }
-
-              try {
-
-                /// ================= UPDATE STOCK =================
-                await _firestore
-                    .collection('materials')
-                    .doc(id)
-                    .update({
-
-                  'stock':
-                      stockSekarang + qty,
-                });
-
-                /// ================= SIMPAN PEMBELIAN =================
-                await _firestore
-                    .collection('material_purchases')
-                    .add({
-
-                  'material_name': nama,
-                  'qty': qty,
-                  'unit': unit,
-                  'price': harga,
-
-                  'created_at':
-                      Timestamp.now(),
-                });
-
-                Get.back();
-
-                Get.snackbar(
-                  'Sukses',
-                  'Stok berhasil ditambahkan',
-                );
-
-              } catch (e) {
-
-                Get.snackbar(
-                  'Error',
-                  e.toString(),
-                );
-              }
-            },
-
-            child: const Text('Simpan'),
+                      Get.snackbar(
+                        'Sukses',
+                        'Stok berhasil ditambahkan',
+                      );
+                    } catch (e) {
+                      Get.snackbar(
+                        'Error',
+                        e.toString(),
+                      );
+                    }
+                  },
+                  child: const Text(
+                    'Simpan',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
