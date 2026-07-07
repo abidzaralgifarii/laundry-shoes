@@ -7,102 +7,58 @@ class TambahPesananView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    final controller =
-        Get.find<TambahPesananController>();
+    final controller = Get.find<TambahPesananController>();
 
     return Scaffold(
-
-      backgroundColor:
-          Colors.grey[100],
+      backgroundColor: Colors.grey[100],
 
       /// ================= APPBAR =================
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
-
-        backgroundColor:
-            const Color(0xFF2196F3),
-
+        backgroundColor: const Color(0xFF2196F3),
         title: const Text(
           'Tambah Pesanan',
-
           style: TextStyle(
             color: Colors.white,
-
-            fontWeight:
-                FontWeight.bold,
-
+            fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
         ),
       ),
 
       body: SingleChildScrollView(
-        padding:
-            const EdgeInsets.all(16),
-
+        padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.stretch,
-
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-
             /// ================= CUSTOMER =================
             Row(
               children: [
-
                 Expanded(
                   child: Obx(
-                    () => DropdownButtonFormField<
-                        Map<String, dynamic>>(
-
+                    () => DropdownButtonFormField<Map<String, dynamic>>(
                       isExpanded: true,
-
-                      value: controller
-                          .selectedCustomer
-                          .value,
-
+                      value: controller.selectedCustomer.value,
                       hint: const Text(
                         'Pilih Pelanggan',
                       ),
-
-                      items: controller
-                          .customerList
-                          .map((item) {
-
+                      items: controller.customerList.map((item) {
                         return DropdownMenuItem(
                           value: item,
-
                           child: Text(
-                            item['name'] ?? '',
-
-                            overflow:
-                                TextOverflow
-                                    .ellipsis,
+                            '${item['name'] ?? '-'} - ${item['phone'] ?? '-'}',
+                            overflow: TextOverflow.ellipsis,
                           ),
                         );
                       }).toList(),
-
                       onChanged: (value) {
-
-                        controller
-                            .selectedCustomer
-                            .value = value;
+                        controller.selectedCustomer.value = value;
                       },
-
-                      decoration:
-                          InputDecoration(
-
-                        labelText:
-                            'Pelanggan',
-
-                        border:
-                            OutlineInputBorder(
-
-                          borderRadius:
-                              BorderRadius
-                                  .circular(
+                      decoration: InputDecoration(
+                        labelText: 'Pelanggan',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
                             14,
                           ),
                         ),
@@ -110,62 +66,38 @@ class TambahPesananView extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(
                   width: 8,
                 ),
-
                 SizedBox(
                   height: 56,
-
                   child: OutlinedButton(
-
-                    style:
-                        OutlinedButton
-                            .styleFrom(
-
-                      foregroundColor:
-                          const Color(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(
                         0xFF2196F3,
                       ),
-
-                      side:
-                          const BorderSide(
+                      side: const BorderSide(
                         color: Color(
                           0xFF2196F3,
                         ),
                       ),
-
-                      shape:
-                          RoundedRectangleBorder(
-
-                        borderRadius:
-                            BorderRadius
-                                .circular(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
                           14,
                         ),
                       ),
                     ),
-
                     onPressed: () async {
-
-                      final result =
-                          await Get.toNamed(
+                      final result = await Get.toNamed(
                         '/tambah-cust',
                       );
 
                       if (result != null) {
+                        controller.customerList.add(result);
 
-                        controller
-                            .customerList
-                            .add(result);
-
-                        controller
-                            .selectedCustomer
-                            .value = result;
+                        controller.selectedCustomer.value = result;
                       }
                     },
-
                     child: const Icon(
                       Icons.add,
                     ),
@@ -179,11 +111,8 @@ class TambahPesananView extends StatelessWidget {
             /// ================= INPUT ITEM =================
             const Text(
               'Input Item Pesanan',
-
               style: TextStyle(
-                fontWeight:
-                    FontWeight.bold,
-
+                fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
             ),
@@ -191,21 +120,11 @@ class TambahPesananView extends StatelessWidget {
             const SizedBox(height: 12),
 
             TextField(
-              controller:
-                  controller.sepatuC,
-
-              decoration:
-                  InputDecoration(
-
-                labelText:
-                    'Jenis Barang',
-
-                border:
-                    OutlineInputBorder(
-
-                  borderRadius:
-                      BorderRadius
-                          .circular(14),
+              controller: controller.sepatuC,
+              decoration: InputDecoration(
+                labelText: 'Nama Barang',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
                 ),
               ),
             ),
@@ -215,59 +134,33 @@ class TambahPesananView extends StatelessWidget {
             /// ================= TREATMENT =================
             Row(
               children: [
-
                 Expanded(
                   child: Obx(
-                    () => DropdownButtonFormField<
-                        Map<String, dynamic>>(
-
+                    () => DropdownButtonFormField<Map<String, dynamic>>(
                       isExpanded: true,
-
-                      value: controller
-                          .selectedTreatment
-                          .value,
-
+                      value: controller.selectedTreatment.value,
                       hint: const Text(
                         'Pilih Treatment',
                       ),
-
-                      items: controller
-                          .treatmentList
-                          .map((item) {
-
+                      items: controller.treatmentList.map((item) {
                         return DropdownMenuItem(
                           value: item,
-
                           child: Text(
                             '${item['name']} - Rp ${item['price']}',
-
-                            overflow:
-                                TextOverflow
-                                    .ellipsis,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         );
                       }).toList(),
-
                       onChanged: (value) {
-
                         if (value != null) {
-
-                          controller
-                              .pilihTreatment(
+                          controller.pilihTreatment(
                             value,
                           );
                         }
                       },
-
-                      decoration:
-                          InputDecoration(
-
-                        border:
-                            OutlineInputBorder(
-
-                          borderRadius:
-                              BorderRadius
-                                  .circular(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
                             14,
                           ),
                         ),
@@ -275,62 +168,38 @@ class TambahPesananView extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(
                   width: 8,
                 ),
-
                 SizedBox(
                   height: 56,
-
                   child: OutlinedButton(
-
-                    style:
-                        OutlinedButton
-                            .styleFrom(
-
-                      foregroundColor:
-                          const Color(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(
                         0xFF2196F3,
                       ),
-
-                      side:
-                          const BorderSide(
+                      side: const BorderSide(
                         color: Color(
                           0xFF2196F3,
                         ),
                       ),
-
-                      shape:
-                          RoundedRectangleBorder(
-
-                        borderRadius:
-                            BorderRadius
-                                .circular(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
                           14,
                         ),
                       ),
                     ),
-
                     onPressed: () async {
-
-                      final result =
-                          await Get.toNamed(
+                      final result = await Get.toNamed(
                         '/treatment',
                       );
 
                       if (result != null) {
+                        controller.treatmentList.add(result);
 
-                        controller
-                            .treatmentList
-                            .add(result);
-
-                        controller
-                            .selectedTreatment
-                            .value = result;
+                        controller.selectedTreatment.value = result;
                       }
                     },
-
                     child: const Icon(
                       Icons.add,
                     ),
@@ -342,26 +211,13 @@ class TambahPesananView extends StatelessWidget {
             const SizedBox(height: 12),
 
             TextField(
-              controller:
-                  controller.qtyC,
-
-              keyboardType:
-                  TextInputType.number,
-
-              onChanged: (_) =>
-                  controller.hitungTotal(),
-
-              decoration:
-                  InputDecoration(
-
+              controller: controller.qtyC,
+              keyboardType: TextInputType.number,
+              onChanged: (_) => controller.hitungTotal(),
+              decoration: InputDecoration(
                 labelText: 'Qty',
-
-                border:
-                    OutlineInputBorder(
-
-                  borderRadius:
-                      BorderRadius
-                          .circular(14),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
                 ),
               ),
             ),
@@ -370,55 +226,34 @@ class TambahPesananView extends StatelessWidget {
 
             Obx(() => Text(
                   'Total Item: Rp ${controller.total.value}',
-
-                  style:
-                      const TextStyle(
-                    fontWeight:
-                        FontWeight.bold,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
                   ),
                 )),
 
             const SizedBox(height: 12),
 
             OutlinedButton.icon(
-
-              style:
-                  OutlinedButton.styleFrom(
-
-                foregroundColor:
-                    const Color(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(
                   0xFF2196F3,
                 ),
-
-                side:
-                    const BorderSide(
-                  color:
-                      Color(0xFF2196F3),
+                side: const BorderSide(
+                  color: Color(0xFF2196F3),
                 ),
-
-                padding:
-                    const EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   vertical: 14,
                 ),
-
-                shape:
-                    RoundedRectangleBorder(
-
-                  borderRadius:
-                      BorderRadius
-                          .circular(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
                     14,
                   ),
                 ),
               ),
-
-              onPressed:
-                  controller.tambahItem,
-
+              onPressed: controller.tambahItem,
               icon: const Icon(
                 Icons.add,
               ),
-
               label: const Text(
                 'Tambah Item',
               ),
@@ -429,11 +264,8 @@ class TambahPesananView extends StatelessWidget {
             /// ================= LIST ITEM =================
             const Text(
               'Daftar Item',
-
               style: TextStyle(
-                fontWeight:
-                    FontWeight.bold,
-
+                fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
             ),
@@ -441,92 +273,52 @@ class TambahPesananView extends StatelessWidget {
             const SizedBox(height: 8),
 
             Obx(() {
-
-              if (controller
-                  .items.isEmpty) {
-
+              if (controller.items.isEmpty) {
                 return const Text(
                   'Belum ada item pesanan',
                 );
               }
 
               return Column(
-                children: controller
-                    .items
-                    .asMap()
-                    .entries
-                    .map((entry) {
+                children: controller.items.asMap().entries.map((entry) {
+                  final index = entry.key;
 
-                  final index =
-                      entry.key;
-
-                  final item =
-                      entry.value;
+                  final item = entry.value;
 
                   return Card(
-
                     elevation: 2,
-
-                    shape:
-                        RoundedRectangleBorder(
-
-                      borderRadius:
-                          BorderRadius
-                              .circular(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
                         16,
                       ),
                     ),
-
                     child: ListTile(
-
                       title: Text(
-                        item[
-                            'shoe_type'],
-
-                        overflow:
-                            TextOverflow
-                                .ellipsis,
+                        item['shoe_type'],
+                        overflow: TextOverflow.ellipsis,
                       ),
-
                       subtitle: Text(
                         '${item['treatment']} x${item['qty']}',
-
-                        overflow:
-                            TextOverflow
-                                .ellipsis,
+                        overflow: TextOverflow.ellipsis,
                       ),
-
                       trailing: Row(
-                        mainAxisSize:
-                            MainAxisSize.min,
-
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-
                           Flexible(
                             child: Text(
                               'Rp ${item['total']}',
-
-                              overflow:
-                                  TextOverflow
-                                      .ellipsis,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-
                           IconButton(
-
                             onPressed: () {
-
-                              controller
-                                  .hapusItem(
+                              controller.hapusItem(
                                 index,
                               );
                             },
-
                             icon: const Icon(
                               Icons.delete,
-
-                              color:
-                                  Colors.red,
+                              color: Colors.red,
                             ),
                           ),
                         ],
@@ -542,13 +334,9 @@ class TambahPesananView extends StatelessWidget {
             /// ================= TOTAL =================
             Obx(() => Text(
                   'Total Semua: Rp ${controller.totalSemua.value}',
-
-                  style:
-                      const TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
-
-                    fontWeight:
-                        FontWeight.bold,
+                    fontWeight: FontWeight.bold,
                   ),
                 )),
 
@@ -557,58 +345,31 @@ class TambahPesananView extends StatelessWidget {
             /// ================= PROMO =================
             Row(
               children: [
-
                 Expanded(
                   child: Obx(
-                    () => DropdownButtonFormField<
-                        Map<String, dynamic>>(
-
+                    () => DropdownButtonFormField<Map<String, dynamic>>(
                       isExpanded: true,
-
-                      value: controller
-                          .selectedPromo
-                          .value,
-
+                      value: controller.selectedPromo.value,
                       hint: const Text(
                         'Pilih Promo',
                       ),
-
-                      items: controller
-                          .promoList
-                          .map((item) {
-
+                      items: controller.promoList.map((item) {
                         return DropdownMenuItem(
                           value: item,
-
                           child: Text(
                             item['name'],
-
-                            overflow:
-                                TextOverflow
-                                    .ellipsis,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         );
                       }).toList(),
-
                       onChanged: (value) {
+                        controller.selectedPromo.value = value;
 
-                        controller
-                            .selectedPromo
-                            .value = value;
-
-                        controller
-                            .hitungDiskon();
+                        controller.hitungDiskon();
                       },
-
-                      decoration:
-                          InputDecoration(
-
-                        border:
-                            OutlineInputBorder(
-
-                          borderRadius:
-                              BorderRadius
-                                  .circular(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
                             14,
                           ),
                         ),
@@ -616,65 +377,40 @@ class TambahPesananView extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(
                   width: 8,
                 ),
-
                 SizedBox(
                   height: 56,
-
                   child: OutlinedButton(
-
-                    style:
-                        OutlinedButton
-                            .styleFrom(
-
-                      foregroundColor:
-                          const Color(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(
                         0xFF2196F3,
                       ),
-
-                      side:
-                          const BorderSide(
+                      side: const BorderSide(
                         color: Color(
                           0xFF2196F3,
                         ),
                       ),
-
-                      shape:
-                          RoundedRectangleBorder(
-
-                        borderRadius:
-                            BorderRadius
-                                .circular(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
                           14,
                         ),
                       ),
                     ),
-
                     onPressed: () async {
-
-                      final result =
-                          await Get.toNamed(
+                      final result = await Get.toNamed(
                         '/tambah-promo',
                       );
 
                       if (result != null) {
+                        controller.promoList.add(result);
 
-                        controller
-                            .promoList
-                            .add(result);
+                        controller.selectedPromo.value = result;
 
-                        controller
-                            .selectedPromo
-                            .value = result;
-
-                        controller
-                            .hitungDiskon();
+                        controller.hitungDiskon();
                       }
                     },
-
                     child: const Icon(
                       Icons.add,
                     ),
@@ -688,9 +424,7 @@ class TambahPesananView extends StatelessWidget {
             /// ================= DISKON =================
             Obx(() => Text(
                   'Diskon: Rp ${controller.discount.value}',
-
-                  style:
-                      const TextStyle(
+                  style: const TextStyle(
                     color: Colors.red,
                   ),
                 )),
@@ -700,13 +434,9 @@ class TambahPesananView extends StatelessWidget {
             /// ================= TOTAL AKHIR =================
             Obx(() => Text(
                   'Total Akhir: Rp ${controller.totalAkhir}',
-
-                  style:
-                      const TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
-
-                    fontWeight:
-                        FontWeight.bold,
+                    fontWeight: FontWeight.bold,
                   ),
                 )),
 
@@ -715,44 +445,26 @@ class TambahPesananView extends StatelessWidget {
             /// ================= SIMPAN =================
             SizedBox(
               width: double.infinity,
-
               child: ElevatedButton(
-
-                style:
-                    ElevatedButton.styleFrom(
-
-                  backgroundColor:
-                      const Color(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(
                     0xFF2196F3,
                   ),
-
-                  padding:
-                      const EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                     vertical: 16,
                   ),
-
-                  shape:
-                      RoundedRectangleBorder(
-
-                    borderRadius:
-                        BorderRadius.circular(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
                       14,
                     ),
                   ),
                 ),
-
-                onPressed:
-                    controller.simpanPesanan,
-
+                onPressed: controller.simpanPesanan,
                 child: const Text(
                   'Simpan Pesanan',
-
                   style: TextStyle(
                     color: Colors.white,
-
-                    fontWeight:
-                        FontWeight.bold,
-
+                    fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
                 ),

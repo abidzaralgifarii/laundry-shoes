@@ -67,7 +67,7 @@ class _SplashViewState
 
             /// ================= LOGO =================
             Image.asset(
-              'assets/images/logo.png',
+              'assets/images/logos.png',
 
               width: 260,
             ),
