@@ -30,20 +30,32 @@ class TambahPesananController extends GetxController {
   /// ================= GET DATA =================
   Future<void> getTreatments() async {
     final snapshot = await _firestore.collection('treatments').get();
-    treatmentList.value =
-        snapshot.docs.map((doc) => doc.data()).toList();
+
+    treatmentList.value = snapshot.docs.map((doc) {
+      final data = doc.data();
+      data['id'] = doc.id;
+      return data;
+    }).toList();
   }
 
   Future<void> getCustomers() async {
     final snapshot = await _firestore.collection('customers').get();
-    customerList.value =
-        snapshot.docs.map((doc) => doc.data()).toList();
+
+    customerList.value = snapshot.docs.map((doc) {
+      final data = doc.data();
+      data['id'] = doc.id;
+      return data;
+    }).toList();
   }
 
   Future<void> getPromos() async {
     final snapshot = await _firestore.collection('promos').get();
-    promoList.value =
-        snapshot.docs.map((doc) => doc.data()).toList();
+
+    promoList.value = snapshot.docs.map((doc) {
+      final data = doc.data();
+      data['id'] = doc.id;
+      return data;
+    }).toList();
   }
 
   /// ================= LOGIC =================
@@ -110,8 +122,130 @@ class TambahPesananController extends GetxController {
 
     totalSemua.value = sum;
 
-    /// 🔥 AUTO HITUNG DISKON
     hitungDiskon();
+  }
+
+  /// ================= EDIT TREATMENT =================
+  void editTreatment(Map<String, dynamic> treatment) {
+    final nameC = TextEditingController(
+      text: treatment['name']?.toString() ?? '',
+    );
+
+    final priceC = TextEditingController(
+      text: treatment['price']?.toString() ?? '0',
+    );
+
+    final durationC = TextEditingController(
+      text: treatment['duration']?.toString() ?? '',
+    );
+
+    Get.defaultDialog(
+      title: 'Edit Treatment',
+      content: Column(
+        children: [
+          TextField(
+            controller: nameC,
+            decoration: const InputDecoration(
+              labelText: 'Nama Treatment',
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: priceC,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Harga',
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: durationC,
+            decoration: const InputDecoration(
+              labelText: 'Durasi',
+            ),
+          ),
+        ],
+      ),
+      textCancel: 'Batal',
+      textConfirm: 'Simpan',
+      confirmTextColor: Colors.white,
+      onConfirm: () async {
+        final id = treatment['id'];
+
+        if (id == null) {
+          Get.snackbar('Error', 'ID treatment tidak ditemukan');
+          return;
+        }
+
+        if (nameC.text.trim().isEmpty) {
+          Get.snackbar('Validasi', 'Nama treatment wajib diisi');
+          return;
+        }
+
+        await _firestore.collection('treatments').doc(id).update({
+          'name': nameC.text.trim(),
+          'price': int.tryParse(priceC.text.trim()) ?? 0,
+          'duration': durationC.text.trim(),
+        });
+
+        Get.back();
+
+        await getTreatments();
+
+        final updatedTreatment = {
+          ...treatment,
+          'name': nameC.text.trim(),
+          'price': int.tryParse(priceC.text.trim()) ?? 0,
+          'duration': durationC.text.trim(),
+        };
+
+        if (selectedTreatment.value?['id'] == id) {
+          selectedTreatment.value = updatedTreatment;
+          hitungTotal();
+        }
+
+        Get.snackbar(
+          'Sukses',
+          'Treatment berhasil diperbarui',
+        );
+      },
+    );
+  }
+
+  /// ================= HAPUS TREATMENT =================
+  void confirmDeleteTreatment(Map<String, dynamic> treatment) {
+    Get.defaultDialog(
+      title: 'Hapus Treatment',
+      middleText: 'Apakah Anda yakin ingin menghapus treatment ini?',
+      textCancel: 'Batal',
+      textConfirm: 'Hapus',
+      confirmTextColor: Colors.white,
+      buttonColor: Colors.red,
+      onConfirm: () async {
+        final id = treatment['id'];
+
+        if (id == null) {
+          Get.snackbar('Error', 'ID treatment tidak ditemukan');
+          return;
+        }
+
+        await _firestore.collection('treatments').doc(id).delete();
+
+        if (selectedTreatment.value?['id'] == id) {
+          selectedTreatment.value = null;
+          total.value = 0;
+        }
+
+        await getTreatments();
+
+        Get.back();
+
+        Get.snackbar(
+          'Sukses',
+          'Treatment berhasil dihapus',
+        );
+      },
+    );
   }
 
   /// ================= PROMO =================
@@ -141,8 +275,7 @@ class TambahPesananController extends GetxController {
     int maxDays = 0;
 
     for (var item in items) {
-      final durasi =
-          (item['duration'] ?? '').toString().toLowerCase();
+      final durasi = (item['duration'] ?? '').toString().toLowerCase();
 
       final angka =
           int.tryParse(durasi.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
@@ -170,28 +303,16 @@ class TambahPesananController extends GetxController {
     try {
       final estimasi = hitungEstimasiSelesai(items);
 
-      /// 🔥 DEBUG WAJIB
-      print('====================');
-      print('PROMO: ${selectedPromo.value}');
-      print('DISCOUNT: ${discount.value}');
-      print('TOTAL SEMUA: ${totalSemua.value}');
-      print('TOTAL AKHIR: $totalAkhir');
-      print('====================');
-
       await _firestore.collection('orders').add({
         'customer_name': selectedCustomer.value?['name'],
         'phone': selectedCustomer.value?['phone'],
         'items': items.toList(),
-
-        /// 🔥 TOTAL ASLI
         'total_price': totalSemua.value,
-
-        /// 🔥 PROMO
         'discount': discount.value,
         'final_price': totalAkhir,
         'promo_name': selectedPromo.value?['name'],
-
         'status': 'Diterima',
+        'stock_cut': false,
         'created_at': Timestamp.now(),
         'estimated_finish': Timestamp.fromDate(estimasi),
       });
@@ -209,7 +330,7 @@ class TambahPesananController extends GetxController {
     super.onInit();
     getTreatments();
     getCustomers();
-    getPromos(); // 🔥 WAJIB
+    getPromos();
   }
 
   @override
